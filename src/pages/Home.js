@@ -1,8 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import Slider from "react-slick";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import BookCarousel from "../components/BookCarousel";
+import Footer from '../components/Footer';
 
 const CATEGORIES = [
   { name: "Fiction", icon: "📖" },
@@ -23,26 +24,25 @@ const promotionalBanners = [
     title: "Big Book Sale",
     subtitle: "Up to 50% off on bestsellers and classics",
     image: "https://via.placeholder.com/1200x400?text=Big+Book+Sale",
-    button: "Shop Now"
+    button: "Shop Now",
   },
   {
     id: 2,
     title: "Declutter Your Shelf",
     subtitle: "Sell your old books easily and earn money",
     image: "https://via.placeholder.com/1200x400?text=Sell+Books",
-    button: "Start Selling"
+    button: "Start Selling",
   },
   {
     id: 3,
     title: "Discover New Reads",
     subtitle: "Explore hand-picked recommendations just for you",
     image: "https://via.placeholder.com/1200x400?text=Discover+Books",
-    button: "Browse Collection"
-  }
+    button: "Browse Collection",
+  },
 ];
 
 const Home = () => {
-  const carouselRef = useRef(null);
   const [books] = useState([
     {
       id: 1,
@@ -50,7 +50,7 @@ const Home = () => {
       author: "James Clear",
       price: 450,
       condition: "Good",
-      description: "An easy & proven way to build good habits and break bad ones."
+      description: "An easy & proven way to build good habits and break bad ones.",
     },
     {
       id: 2,
@@ -58,7 +58,7 @@ const Home = () => {
       author: "Paulo Coelho",
       price: 300,
       condition: "Like New",
-      description: "A philosophical book about following your dreams."
+      description: "A philosophical book about following your dreams.",
     },
     {
       id: 3,
@@ -66,16 +66,16 @@ const Home = () => {
       author: "George Orwell",
       price: 250,
       condition: "Fair",
-      description: "A dystopian social science fiction novel and cautionary tale."
-    }
+      description: "A dystopian social science fiction novel and cautionary tale.",
+    },
   ]);
+
+  const carouselRef = useRef();
 
   const scrollCarousel = (direction) => {
     if (carouselRef.current) {
-      carouselRef.current.scrollBy({
-        left: direction * 200,
-        behavior: "smooth"
-      });
+      const scrollAmount = 200;
+      carouselRef.current.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
     }
   };
 
@@ -94,16 +94,12 @@ const Home = () => {
     <div className="bg-gray-50 min-h-screen">
       <Navbar />
 
-      {/* 🔄 Promotional Carousel */}
+      {/* Hero/Promotional Carousel */}
       <section className="relative">
         <Slider {...carouselSettings}>
           {promotionalBanners.map((banner) => (
             <div key={banner.id} className="relative">
-              <img
-                src={banner.image}
-                alt={banner.title}
-                className="w-full h-64 md:h-96 object-cover"
-              />
+              <img src={banner.image} alt={banner.title} className="w-full h-64 md:h-96 object-cover" />
               <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white text-center px-4">
                 <h2 className="text-2xl md:text-4xl font-bold mb-2">{banner.title}</h2>
                 <p className="text-md md:text-lg mb-4">{banner.subtitle}</p>
@@ -116,7 +112,7 @@ const Home = () => {
         </Slider>
       </section>
 
-      {/* 🔠 Categories Carousel with Arrows */}
+      {/* Categories Carousel with Arrows */}
       <section className="py-10 px-4 relative">
         <h2 className="text-2xl font-bold mb-6 text-center">Top Categories</h2>
         <div className="relative flex items-center">
@@ -150,10 +146,38 @@ const Home = () => {
         </div>
       </section>
 
-      {/*  Categorized Product Carousels */}
-      <BookCarousel title="Best Sellers" books={books.slice(0, 3)} />
-      <BookCarousel title="🔥 Top Deals" books={books.filter(b => b.price < 400)} />
-      <BookCarousel title=" Books Under ₹300" books={books.filter(b => b.price <= 300)} />
+      {/* Book Carousels */}
+      <BookCarousel title="📚 Best Sellers" books={books.slice(0, 3)} />
+      <BookCarousel title="🔥 Top Deals" books={books.filter((b) => b.price < 400)} />
+      <BookCarousel title="💸 Books Under ₹300" books={books.filter((b) => b.price <= 300)} />
+
+      {/* 🛍️ Sell Your Books Section */}
+<section className="bg-white py-16 px-6 md:px-20 mt-10 shadow-inner">
+  <div className="flex flex-col md:flex-row items-center gap-10">
+    <img
+      src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80"
+      alt="Sell Books"
+      className="w-full md:w-1/2 rounded shadow-md object-cover"
+    />
+    <div className="md:w-1/2">
+      <h2 className="text-3xl font-bold mb-4 text-gray-800">We Also Buy Books</h2>
+      <p className="mb-4 text-gray-600">
+        Got pre-loved books? Turn them into cash or store credit. Selling your books is quick and hassle-free.
+      </p>
+      <ul className="list-disc pl-5 space-y-2 text-gray-700">
+        <li>Search for your book title in our catalog</li>
+        <li>Check the current buyback price</li>
+        <li>Add the book to your sell cart</li>
+        <li>Schedule a pickup or drop it off at a center</li>
+        <li>Get paid after a quick quality check</li>
+      </ul>
+      <button className="mt-6 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+        Start Selling
+      </button>
+    </div>
+  </div>
+</section>
+  <Footer/>
     </div>
   );
 };
