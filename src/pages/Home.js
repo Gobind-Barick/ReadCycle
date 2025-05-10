@@ -1,7 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Slider from "react-slick";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import BookCarousel from "../components/BookCarousel";
+
+const CATEGORIES = [
+  { name: "Fiction", icon: "📖" },
+  { name: "Non-Fiction", icon: "📚" },
+  { name: "Science", icon: "🔬" },
+  { name: "History", icon: "🏛️" },
+  { name: "Biographies", icon: "👤" },
+  { name: "Children", icon: "🧒" },
+  { name: "Education", icon: "🎓" },
+  { name: "Comics", icon: "🦸‍♂️" },
+  { name: "Fantasy", icon: "🐉" },
+  { name: "Self-Help", icon: "💡" },
+];
 
 const promotionalBanners = [
   {
@@ -28,6 +42,7 @@ const promotionalBanners = [
 ];
 
 const Home = () => {
+  const carouselRef = useRef(null);
   const [books] = useState([
     {
       id: 1,
@@ -54,6 +69,15 @@ const Home = () => {
       description: "A dystopian social science fiction novel and cautionary tale."
     }
   ]);
+
+  const scrollCarousel = (direction) => {
+    if (carouselRef.current) {
+      carouselRef.current.scrollBy({
+        left: direction * 200,
+        behavior: "smooth"
+      });
+    }
+  };
 
   const carouselSettings = {
     dots: true,
@@ -92,30 +116,44 @@ const Home = () => {
         </Slider>
       </section>
 
-      {/* 📚 Available Books Section */}
-      <div className="px-6 py-10">
-        <h1 className="text-3xl font-bold mb-6">Available Books</h1>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {books.map((book) => (
-            <div
-              key={book.id}
-              className="bg-white p-4 rounded-lg shadow-lg hover:shadow-xl"
-            >
-              <img
-                src="https://via.placeholder.com/150"
-                alt="book"
-                className="w-full h-48 object-cover rounded-md"
-              />
-              <h2 className="text-xl font-semibold mt-4">{book.title}</h2>
-              <p className="text-gray-600">{book.author}</p>
-              <p className="text-lg font-semibold mt-2">₹{book.price}</p>
-              <Link to={`/book/${book.id}`} className="text-blue-500 mt-4 inline-block">
-                View Details
-              </Link>
-            </div>
-          ))}
+      {/* 🔠 Categories Carousel with Arrows */}
+      <section className="py-10 px-4 relative">
+        <h2 className="text-2xl font-bold mb-6 text-center">Top Categories</h2>
+        <div className="relative flex items-center">
+          <button
+            onClick={() => scrollCarousel(-1)}
+            className="absolute left-0 z-10 bg-white shadow-md p-2 rounded-full hover:bg-gray-100"
+          >
+            ◀
+          </button>
+          <div
+            ref={carouselRef}
+            className="flex overflow-x-auto space-x-4 px-8 scroll-smooth"
+            style={{ scrollbarWidth: "none" }}
+          >
+            {CATEGORIES.map((cat) => (
+              <div
+                key={cat.name}
+                className="min-w-[120px] bg-white p-4 rounded-lg shadow text-center flex-shrink-0 hover:shadow-md"
+              >
+                <div className="text-3xl mb-2">{cat.icon}</div>
+                <p className="text-sm font-medium">{cat.name}</p>
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={() => scrollCarousel(1)}
+            className="absolute right-0 z-10 bg-white shadow-md p-2 rounded-full hover:bg-gray-100"
+          >
+            ▶
+          </button>
         </div>
-      </div>
+      </section>
+
+      {/*  Categorized Product Carousels */}
+      <BookCarousel title="Best Sellers" books={books.slice(0, 3)} />
+      <BookCarousel title="🔥 Top Deals" books={books.filter(b => b.price < 400)} />
+      <BookCarousel title=" Books Under ₹300" books={books.filter(b => b.price <= 300)} />
     </div>
   );
 };
