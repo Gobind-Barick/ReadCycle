@@ -1,69 +1,157 @@
 import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useLocation,useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import BookCarousel from "../components/BookCarousel";
 
-const mockBooks = [
-  {
-    id: "1",
-    title: "Atomic Habits",
-    author: "James Clear",
-    price: 450,
-    condition: "Good",
-    description: "An easy & proven way to build good habits and break bad ones.",
-    image: "https://via.placeholder.com/200x300?text=Atomic+Habits"
-  },
-  {
-    id: "2",
-    title: "The Alchemist",
-    author: "Paulo Coelho",
-    price: 300,
-    condition: "Like New",
-    description: "A philosophical story about a boy chasing his dreams.",
-    image: "https://via.placeholder.com/200x300?text=The+Alchemist"
-  },
-  {
-    id: "3",
-    title: "1984",
-    author: "George Orwell",
-    price: 250,
-    condition: "Fair",
-    description: "A dystopian novel about totalitarianism and surveillance.",
-    image: "https://via.placeholder.com/200x300?text=1984"
-  }
-];
+// Mock book data
+const mockBook = {
+  id: 1,
+  title: "Atomic Habits",
+  author: "James Clear",
+  price: 450,
+  description:
+    "An easy & proven way to build good habits and break bad ones. This book is a must-read for anyone looking to improve their life through small but impactful changes.",
+  image: "https://via.placeholder.com/300x400?text=Atomic+Habits",
+  publisher: "Penguin Books",
+  isbn: "978-0-7352-1141-2",
+  language: "English",
+  genre: "Self-Help",
+  pages: 320,
+  format: "Hardcover",
+  authorBio:
+    "James Clear is a writer and speaker focused on habits, decision-making, and continuous improvement. His work has been featured in The New York Times, Time Magazine, and more.",
+  averageRating: 4.7,
+  reviews: [
+    {
+      username: "JohnDoe",
+      rating: 5,
+      comment: "Incredible book! It changed my life."
+    },
+    {
+      username: "JaneDoe",
+      rating: 4,
+      comment: "Very helpful, but a bit repetitive in some areas."
+    },
+    {
+      username: "AliceSmith",
+      rating: 5,
+      comment: "I love how actionable the advice is. Highly recommended!"
+    }
+  ],
+  relatedBooks: [
+    {
+      id: 2,
+      title: "The Power of Habit",
+      author: "Charles Duhigg",
+      price: 399,
+      image: "https://via.placeholder.com/300x400?text=The+Power+of+Habit"
+    },
+    {
+      id: 3,
+      title: "Deep Work",
+      author: "Cal Newport",
+      price: 499,
+      image: "https://via.placeholder.com/300x400?text=Deep+Work"
+    },
+    {
+      id: 4,
+      title: "Mindset: The New Psychology of Success",
+      author: "Carol S. Dweck",
+      price: 450,
+      image: "https://via.placeholder.com/300x400?text=Mindset"
+    }
+  ]
+};
 
 const BookDetails = () => {
-  const { id } = useParams();
+  const book = mockBook;
   const navigate = useNavigate();
-  const book = mockBooks.find((book) => book.id === id);
-
-  if (!book) return <div className="p-6 text-xl">Book not found.</div>;
 
   return (
-    <div className="container mx-auto py-10 px-4">
-      <div className="flex flex-col md:flex-row gap-10">
-        <img
-          src={book.image}
-          alt={book.title}
-          className="w-64 h-96 object-cover rounded-lg shadow"
-        />
-        <div className="flex flex-col justify-between">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">{book.title}</h1>
-            <p className="text-xl text-gray-600 mb-2">by {book.author}</p>
-            <p className="text-md text-gray-700 mb-4">{book.description}</p>
-            <p className="text-lg font-semibold text-gray-800 mb-1">
-              Condition: <span className="text-gray-600">{book.condition}</span>
-            </p>
-            <p className="text-2xl font-bold mt-4 mb-6">₹{book.price}</p>
+    <div className="bg-gray-50 min-h-screen">
+      <Navbar />
+      
+      {/* Hero Section */}
+      <section className="flex flex-col md:flex-row justify-between py-10 px-6">
+        <div className="w-full md:w-1/3">
+          <img
+            src={book.image}
+            alt={book.title}
+            className="w-full h-96 object-cover rounded-lg shadow-md"
+          />
+        </div>
+
+        <div className="w-full md:w-2/3 md:pl-6 mt-6 md:mt-0">
+          <h1 className="text-3xl font-semibold">{book.title}</h1>
+          <p className="text-xl text-gray-600">{book.author}</p>
+          <div className="mt-4 flex items-center">
+            <p className="text-lg font-bold mr-4">₹{book.price}</p>
+            <span className="text-sm text-gray-500">In stock</span>
           </div>
+          <div className="mt-4">
           <button
-            className="w-fit px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-            onClick={() => navigate("/buy", { state: { book } })}
-          >
-            Buy Now
+  onClick={() => navigate("/cart")}
+  className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+>
+  Add to Cart
+</button>
+          </div>
+        </div>
+      </section>
+
+      {/* Book Specifications */}
+      <section className="py-10 px-6 bg-white shadow-md mb-10">
+        <h2 className="text-2xl font-bold mb-4">Specifications</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div><strong>Publisher:</strong> {book.publisher}</div>
+          <div><strong>ISBN:</strong> {book.isbn}</div>
+          <div><strong>Language:</strong> {book.language}</div>
+          <div><strong>Genre:</strong> {book.genre}</div>
+          <div><strong>Pages:</strong> {book.pages}</div>
+          <div><strong>Format:</strong> {book.format}</div>
+        </div>
+      </section>
+
+      {/* Description */}
+      <section className="py-10 px-6 bg-white shadow-md mb-10">
+        <h2 className="text-2xl font-bold mb-4">Description</h2>
+        <p>{book.description}</p>
+        <h3 className="text-xl font-semibold mt-6">About the Author</h3>
+        <p>{book.authorBio}</p>
+      </section>
+
+      {/* Customer Reviews */}
+      <section className="py-10 px-6 bg-white shadow-md mb-10">
+        <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
+        <div>
+          <p className="text-sm">Average Rating: {book.averageRating} / 5</p>
+          {/* Loop through reviews */}
+          {book.reviews.map((review, index) => (
+            <div key={index} className="mt-4 border-t pt-4">
+              <p className="text-md font-semibold">{review.username}</p>
+              <p className="text-sm">{review.comment}</p>
+              <p className="text-sm text-gray-500">Rating: {review.rating} / 5</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6">
+          <h3 className="text-xl font-semibold">Write a Review</h3>
+          <textarea
+            rows="4"
+            className="w-full p-3 mt-2 border border-gray-300 rounded-lg"
+            placeholder="Your review here..."
+          />
+          <button className="mt-4 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+            Submit Review
           </button>
         </div>
-      </div>
+      </section>
+
+      {/* Related Books */}
+      <section className="py-10 px-6">
+        <h2 className="text-2xl font-bold mb-6">Related Books</h2>
+        <BookCarousel title="You Might Also Like" books={book.relatedBooks} />
+      </section>
     </div>
   );
 };
