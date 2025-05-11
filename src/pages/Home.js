@@ -48,8 +48,10 @@ const Home = () => {
   const [books, setBooks] = useState([]);
   const carouselRef = useRef();
 
-  useEffect(() => {
-    axios.get("http://localhost:8080/api/books")
+  useEffect(() =
+    axios.get("https://readcycle-backend-production.up.railway.app/api/books")
+
+    
       .then((response) => {
         setBooks(response.data);
       })
@@ -57,6 +59,8 @@ const Home = () => {
         console.error("Failed to fetch books:", error);
       });
   }, []);
+
+
 
 
   const scrollCarousel = (direction) => {
@@ -146,8 +150,12 @@ const Home = () => {
 
       {/* 🛍️ Sell Your Books Section */}
 
-          <SellProcessSection/>
-  <Footer/>
+      <section className="bg-white py-16 px-6 md:px-20 mt-10 shadow-inner">
+        <SellProcessSection />
+      </section>
+
+      <Footer />
+
     </div>
   );
 };
