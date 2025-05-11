@@ -1,4 +1,3 @@
-// src/components/BookCarousel.js
 import React from "react";
 import Slider from "react-slick";
 import { Link } from "react-router-dom";
@@ -27,8 +26,11 @@ const PrevArrow = ({ onClick }) => (
 const BookCarousel = ({ title, books }) => {
   const settings = {
     infinite: true,
-    speed: 500,
     slidesToShow: 6,
+    speed: 600,
+    slidesToScroll: 1,
+    autoplay: true,              // enables auto sliding
+    autoplaySpeed: 2500,         // slide every 2.5 seconds
     arrows: true,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
