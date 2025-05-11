@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Navbar from "../components/Navbar";
+import ProductCard from "../components/ProductCard";
 
 // Dummy data
 const allProducts = [
@@ -46,7 +47,6 @@ for (let id = 41; id <= 300; id++) {
   });
 }
 
-
 // Filter products by category
 const normalize = (str) => str.toLowerCase().replace(/\s+/g, '-');
 
@@ -61,7 +61,7 @@ const CategoryPage = () => {
     .map((p) => ({
       ...p,
       image: `https://picsum.photos/200`,
-  }));
+    }));
 
   const sorted = [...filtered].sort((a, b) => {
     if (sort === "low") return a.price - b.price;
@@ -80,42 +80,36 @@ const CategoryPage = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-        <Navbar />
-        <div className="min-h-screen px-4 py-10 bg-gray-50">
-        <h1 className="text-3xl font-bold mb-6 capitalize text-center">{category.replace(/-/g, " ")}</h1>
+      <Navbar />
+      <div className="min-h-screen bg-gray-50 py-10">
+      <div className="max-w-7xl mx-auto px-6 bg-gray-50">
+        <h1 className="text-3xl font-bold mb-6 capitalize text-center">
+          {category.replace(/-/g, " ")}
+        </h1>
 
         {/* Sorting Dropdown */}
         <div className="flex justify-end mb-6">
-            <select
+          <select
             onChange={(e) => setSort(e.target.value)}
             value={sort}
             className="border p-2 rounded"
-            >
+          >
             <option value="suggested">Suggested</option>
             <option value="low">Price: Low to High</option>
             <option value="high">Price: High to Low</option>
-            </select>
+          </select>
         </div>
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {currentProducts.length > 0 ? (
             currentProducts.map((product) => (
-              <div key={product.id} className="bg-white p-4 rounded shadow hover:shadow-md">
-                <img
-                  src={product.image}
-                  alt={product.title}
-                  className="w-full h-40 object-cover rounded mb-3"
-                />
-                <h3 className="text-lg font-semibold mb-1">{product.title}</h3>
-                <p className="text-gray-600 mb-2">{product.price}</p>
-                <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-                  View
-                </button>
-              </div>
+              <ProductCard key={product.id} product={product} />
             ))
           ) : (
-            <p className="col-span-full text-center text-gray-600">No products found in this category.</p>
+            <p className="col-span-full text-center text-gray-600">
+              No products found in this category.
+            </p>
           )}
         </div>
 
@@ -131,10 +125,11 @@ const CategoryPage = () => {
           )}
 
           {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter((page) =>
-              page === 1 ||
-              page === totalPages ||
-              (page >= currentPage - 2 && page <= currentPage + 2)
+            .filter(
+              (page) =>
+                page === 1 ||
+                page === totalPages ||
+                (page >= currentPage - 2 && page <= currentPage + 2)
             )
             .map((page, index, arr) => {
               const prevPage = arr[index - 1];
@@ -143,7 +138,9 @@ const CategoryPage = () => {
               return (
                 <React.Fragment key={page}>
                   {showEllipsis && (
-                    <span className="px-2 py-2 text-gray-500 select-none">...</span>
+                    <span className="px-2 py-2 text-gray-500 select-none">
+                      ...
+                    </span>
                   )}
                   <button
                     onClick={() => setCurrentPage(page)}
@@ -168,8 +165,9 @@ const CategoryPage = () => {
             </button>
           )}
         </div>
-        </div>
-        <Footer/>
+      </div>
+      </div>
+      <Footer />
     </div>
   );
 };
