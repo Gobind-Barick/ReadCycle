@@ -48,6 +48,17 @@ const Home = () => {
   const [books, setBooks] = useState([]);
   const carouselRef = useRef();
 
+  useEffect(() => {
+    axios.get("http://localhost:8080/api/books")
+      .then((response) => {
+        setBooks(response.data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch books:", error);
+      });
+  }, []);
+
+
   const scrollCarousel = (direction) => {
     if (carouselRef.current) {
       const scrollAmount = 200;
@@ -132,31 +143,8 @@ const Home = () => {
       <BookCarousel title="💸 Books Under ₹300" books={books.filter((b) => b.price <= 300)} />
 
       {/* 🛍️ Sell Your Books Section */}
-<section className="bg-white py-16 px-6 md:px-20 mt-10 shadow-inner">
-  <div className="flex flex-col md:flex-row items-center gap-10">
-    <img
-      src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80"
-      alt="Sell Books"
-      className="w-full md:w-1/2 rounded shadow-md object-cover"
-    />
-    <div className="md:w-1/2">
-      <h2 className="text-3xl font-bold mb-4 text-gray-800">We Also Buy Books</h2>
-      <p className="mb-4 text-gray-600">
-        Got pre-loved books? Turn them into cash or store credit. Selling your books is quick and hassle-free.
-      </p>
-      <ul className="list-disc pl-5 space-y-2 text-gray-700">
-        <li>Search for your book title in our catalog</li>
-        <li>Check the current buyback price</li>
-        <li>Add the book to your sell cart</li>
-        <li>Schedule a pickup or drop it off at a center</li>
-        <li>Get paid after a quick quality check</li>
-      </ul>
-      <button className="mt-6 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-        Start Selling
-      </button>
-    </div>
-  </div>
-</section>
+
+          <SellProcessSection/>
   <Footer/>
     </div>
   );
