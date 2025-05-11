@@ -48,8 +48,10 @@ const Home = () => {
   const [books, setBooks] = useState([]);
   const carouselRef = useRef();
 
-  useEffect(() => {
+  useEffect(() =
     axios.get("https://readcycle-backend-production.up.railway.app/api/books")
+
+    
       .then((response) => {
         setBooks(response.data);
       })
@@ -57,6 +59,9 @@ const Home = () => {
         console.error("Failed to fetch books:", error);
       });
   }, []);
+
+
+
 
   const scrollCarousel = (direction) => {
     if (carouselRef.current) {
@@ -119,10 +124,12 @@ const Home = () => {
                 <Link
                   to={`/product-category/${slug}`}
                   key={cat.name}
-                  className="min-w-[120px] bg-white p-4 rounded-lg shadow text-center flex-shrink-0 hover:shadow-md hover:bg-gray-300 transition"
+                  className="min-w-[140px] bg-white p-5 rounded-xl shadow text-center flex-shrink-0 hover:shadow-lg hover:bg-gray-300 transform hover:scale-110 transition-all duration-200"
                 >
                   <div className="text-3xl mb-2">{cat.icon}</div>
-                  <p className="text-sm font-medium text-gray-800">{cat.name}</p>
+                  <p className="text-sm font-medium text-gray-800">
+                    {cat.name}
+                  </p>
                 </Link>
               );
             })}
@@ -142,11 +149,13 @@ const Home = () => {
       <BookCarousel title="💸 Books Under ₹300" books={books.filter((b) => b.price <= 300)} />
 
       {/* 🛍️ Sell Your Books Section */}
+
       <section className="bg-white py-16 px-6 md:px-20 mt-10 shadow-inner">
         <SellProcessSection />
       </section>
 
       <Footer />
+
     </div>
   );
 };
