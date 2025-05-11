@@ -112,15 +112,19 @@ const Home = () => {
             className="flex overflow-x-auto space-x-4 px-8 scroll-smooth"
             style={{ scrollbarWidth: "none" }}
           >
-            {CATEGORIES.map((cat) => (
-              <div
-                key={cat.name}
-                className="min-w-[120px] bg-white p-4 rounded-lg shadow text-center flex-shrink-0 hover:shadow-md"
-              >
-                <div className="text-3xl mb-2">{cat.icon}</div>
-                <p className="text-sm font-medium">{cat.name}</p>
-              </div>
-            ))}
+            {CATEGORIES.map((cat) => {
+              const slug = cat.name.toLowerCase().replace(/\s+/g, "-");
+              return (
+                <Link
+                  to={`/product-category/${slug}`}
+                  key={cat.name}
+                  className="min-w-[120px] bg-white p-4 rounded-lg shadow text-center flex-shrink-0 hover:shadow-md hover:bg-gray-300 transition"
+                >
+                  <div className="text-3xl mb-2">{cat.icon}</div>
+                  <p className="text-sm font-medium text-gray-800">{cat.name}</p>
+                </Link>
+              );
+            })}
           </div>
           <button
             onClick={() => scrollCarousel(1)}
