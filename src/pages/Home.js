@@ -140,7 +140,7 @@ const Home = () => {
       </section>
 
       {/* Book Carousels */}
-      <BookCarousel title="📚 Best Sellers" books={books.slice(0, 9)} />
+      <BookCarousel title="📚 Best Sellers" books={books.slice(1,10 )} />
       <BookCarousel title="🔥 Top Deals" books={books.filter((b) => b.price < 400)} />
       <BookCarousel title="💸 Books Under ₹300" books={books.filter((b) => b.price <= 300)} />
 
