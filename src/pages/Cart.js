@@ -1,15 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Cart = () => {
-  // Mock cart data
-  const cartItems = [
+  const [cartItems, setCartItems] = useState([
     {
       id: 1,
       title: "Atomic Habits",
       price: 450,
       condition: "Good",
       image: "https://via.placeholder.com/100x130",
+      quantity: 1,
     },
     {
       id: 2,
@@ -17,10 +17,33 @@ const Cart = () => {
       price: 250,
       condition: "Fair",
       image: "https://via.placeholder.com/100x130",
+      quantity: 1,
     },
-  ];
+  ]);
 
-  const total = cartItems.reduce((acc, item) => acc + item.price, 0);
+  const handleIncrement = (id) => {
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+      )
+    );
+  };
+
+  const handleDecrement = (id) => {
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === id && item.quantity > 1
+          ? { ...item, quantity: item.quantity - 1 }
+          : item
+      )
+    );
+  };
+
+  const handleRemove = (id) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   return (
     <div className="container mx-auto px-4 py-10">
@@ -37,8 +60,28 @@ const Cart = () => {
                   <h2 className="text-xl font-semibold">{item.title}</h2>
                   <p className="text-gray-600">Condition: {item.condition}</p>
                   <p className="text-lg font-bold">₹{item.price}</p>
+                  <div className="mt-2 flex items-center space-x-3">
+                    <button
+                      className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                      onClick={() => handleDecrement(item.id)}
+                    >
+                      -
+                    </button>
+                    <span>{item.quantity}</span>
+                    <button
+                      className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                      onClick={() => handleIncrement(item.id)}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
-                <button className="text-red-500 hover:underline">Remove</button>
+                <button
+                  className="text-red-500 hover:underline ml-4"
+                  onClick={() => handleRemove(item.id)}
+                >
+                  Remove
+                </button>
               </div>
             ))}
           </div>

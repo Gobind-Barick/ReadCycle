@@ -48,10 +48,8 @@ const Home = () => {
   const [books, setBooks] = useState([]);
   const carouselRef = useRef();
 
-  useEffect(() =
+  useEffect(() => {
     axios.get("https://readcycle-backend-production.up.railway.app/api/books")
-
-    
       .then((response) => {
         setBooks(response.data);
       })
