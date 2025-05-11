@@ -133,10 +133,12 @@ const Home = () => {
                 <Link
                   to={`/product-category/${slug}`}
                   key={cat.name}
-                  className="min-w-[120px] bg-white p-4 rounded-lg shadow text-center flex-shrink-0 hover:shadow-md hover:bg-gray-300 transition"
+                  className="min-w-[140px] bg-white p-5 rounded-xl shadow text-center flex-shrink-0 hover:shadow-lg hover:bg-gray-300 transform hover:scale-110 transition-all duration-200"
                 >
                   <div className="text-3xl mb-2">{cat.icon}</div>
-                  <p className="text-sm font-medium text-gray-800">{cat.name}</p>
+                  <p className="text-sm font-medium text-gray-800">
+                    {cat.name}
+                  </p>
                 </Link>
               );
             })}
