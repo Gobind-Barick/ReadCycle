@@ -1,4 +1,5 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import axios from "axios";
 import Slider from "react-slick";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -43,34 +44,18 @@ const promotionalBanners = [
 ];
 
 const Home = () => {
-  const [books] = useState([
-    {
-      id: 1,
-      title: "Atomic Habits",
-      author: "James Clear",
-      price: 450,
-      condition: "Good",
-      description: "An easy & proven way to build good habits and break bad ones.",
-    },
-    {
-      id: 2,
-      title: "The Alchemist",
-      author: "Paulo Coelho",
-      price: 300,
-      condition: "Like New",
-      description: "A philosophical book about following your dreams.",
-    },
-    {
-      id: 3,
-      title: "1984",
-      author: "George Orwell",
-      price: 250,
-      condition: "Fair",
-      description: "A dystopian social science fiction novel and cautionary tale.",
-    },
-  ]);
-
+  const [books, setBooks] = useState([]);
   const carouselRef = useRef();
+
+  useEffect(() => {
+    axios.get("http://localhost:8080/api/books")
+      .then((response) => {
+        setBooks(response.data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch books:", error);
+      });
+  }, []);
 
   const scrollCarousel = (direction) => {
     if (carouselRef.current) {
@@ -152,32 +137,33 @@ const Home = () => {
       <BookCarousel title="💸 Books Under ₹300" books={books.filter((b) => b.price <= 300)} />
 
       {/* 🛍️ Sell Your Books Section */}
-<section className="bg-white py-16 px-6 md:px-20 mt-10 shadow-inner">
-  <div className="flex flex-col md:flex-row items-center gap-10">
-    <img
-      src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80"
-      alt="Sell Books"
-      className="w-full md:w-1/2 rounded shadow-md object-cover"
-    />
-    <div className="md:w-1/2">
-      <h2 className="text-3xl font-bold mb-4 text-gray-800">We Also Buy Books</h2>
-      <p className="mb-4 text-gray-600">
-        Got pre-loved books? Turn them into cash or store credit. Selling your books is quick and hassle-free.
-      </p>
-      <ul className="list-disc pl-5 space-y-2 text-gray-700">
-        <li>Search for your book title in our catalog</li>
-        <li>Check the current buyback price</li>
-        <li>Add the book to your sell cart</li>
-        <li>Schedule a pickup or drop it off at a center</li>
-        <li>Get paid after a quick quality check</li>
-      </ul>
-      <button className="mt-6 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-        Start Selling
-      </button>
-    </div>
-  </div>
-</section>
-  <Footer/>
+      <section className="bg-white py-16 px-6 md:px-20 mt-10 shadow-inner">
+        <div className="flex flex-col md:flex-row items-center gap-10">
+          <img
+            src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80"
+            alt="Sell Books"
+            className="w-full md:w-1/2 rounded shadow-md object-cover"
+          />
+          <div className="md:w-1/2">
+            <h2 className="text-3xl font-bold mb-4 text-gray-800">We Also Buy Books</h2>
+            <p className="mb-4 text-gray-600">
+              Got pre-loved books? Turn them into cash or store credit. Selling your books is quick and hassle-free.
+            </p>
+            <ul className="list-disc pl-5 space-y-2 text-gray-700">
+              <li>Search for your book title in our catalog</li>
+              <li>Check the current buyback price</li>
+              <li>Add the book to your sell cart</li>
+              <li>Schedule a pickup or drop it off at a center</li>
+              <li>Get paid after a quick quality check</li>
+            </ul>
+            <button className="mt-6 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+              Start Selling
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
 };
