@@ -5,6 +5,12 @@ import { loadRazorpayScript } from "../utils/razorpay";
 const Checkout = () => {
   const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState("razorpay");
+  const [form, setForm] = useState({
+    name: "",
+    address: "",
+    city: "",
+    pincode: "",
+  });
 
   const mockBook = {
     id: 1,
@@ -14,9 +20,29 @@ const Checkout = () => {
     condition: "Good",
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const isFormValid = () => {
+    return (
+      form.name.trim() &&
+      form.address.trim() &&
+      form.city.trim() &&
+      form.pincode.trim()
+    );
+  };
+
   const handlePlaceOrder = async () => {
-    if (paymentMethod !== "razorpay") {
-      alert("Only Razorpay is implemented at the moment.");
+    if (!isFormValid()) {
+      alert("❗ Please fill in all billing details.");
+      return;
+    }
+
+    if (paymentMethod === "cod") {
+      alert("✅ Order placed with Cash on Delivery!");
+      navigate("/");
       return;
     }
 
@@ -29,7 +55,7 @@ const Checkout = () => {
     const amountInPaise = mockBook.price * 100;
 
     const options = {
-      key: "rzp_test_fLdHPGEAL3ijP6", // ✅ Your Razorpay test key
+      key: "rzp_test_fLdHPGEAL3ijP6",
       amount: amountInPaise,
       currency: "INR",
       name: "BookNook",
@@ -41,7 +67,7 @@ const Checkout = () => {
         navigate("/");
       },
       prefill: {
-        name: "Test User",
+        name: form.name,
         email: "testuser@example.com",
         contact: "9999999999",
       },
@@ -65,10 +91,38 @@ const Checkout = () => {
         {/* Billing Details */}
         <div className="bg-white p-6 shadow rounded">
           <h2 className="text-xl font-semibold mb-4">Billing Details</h2>
-          <input type="text" placeholder="Full Name" className="w-full p-2 border mb-4 rounded" />
-          <input type="text" placeholder="Address" className="w-full p-2 border mb-4 rounded" />
-          <input type="text" placeholder="City" className="w-full p-2 border mb-4 rounded" />
-          <input type="text" placeholder="Pincode" className="w-full p-2 border mb-4 rounded" />
+          <input
+            name="name"
+            type="text"
+            placeholder="Full Name"
+            value={form.name}
+            onChange={handleInputChange}
+            className="w-full p-2 border mb-4 rounded"
+          />
+          <input
+            name="address"
+            type="text"
+            placeholder="Address"
+            value={form.address}
+            onChange={handleInputChange}
+            className="w-full p-2 border mb-4 rounded"
+          />
+          <input
+            name="city"
+            type="text"
+            placeholder="City"
+            value={form.city}
+            onChange={handleInputChange}
+            className="w-full p-2 border mb-4 rounded"
+          />
+          <input
+            name="pincode"
+            type="text"
+            placeholder="Pincode"
+            value={form.pincode}
+            onChange={handleInputChange}
+            className="w-full p-2 border mb-4 rounded"
+          />
         </div>
 
         {/* Order Summary + Payment */}
@@ -80,7 +134,7 @@ const Checkout = () => {
           </div>
 
           <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
-          <div className="mb-6">
+          <div className="mb-6 space-y-2">
             <label className="flex items-center space-x-2">
               <input
                 type="radio"
@@ -90,6 +144,16 @@ const Checkout = () => {
                 onChange={() => setPaymentMethod("razorpay")}
               />
               <span>Pay with Razorpay</span>
+            </label>
+            <label className="flex items-center space-x-2">
+              <input
+                type="radio"
+                name="payment"
+                value="cod"
+                checked={paymentMethod === "cod"}
+                onChange={() => setPaymentMethod("cod")}
+              />
+              <span>Cash on Delivery</span>
             </label>
           </div>
 
