@@ -48,7 +48,7 @@ const Home = () => {
   const carouselRef = useRef();
 
   useEffect(() => {
-    axios.get("http://localhost:8080/api/books")
+    axios.get("https://readcycle-backend-production.up.railway.app/api/books")
       .then((response) => {
         setBooks(response.data);
       })
