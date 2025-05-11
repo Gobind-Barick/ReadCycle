@@ -5,6 +5,7 @@ import BookDetails from "./pages/BookDetails";
 import BuyPage from "./pages/BuyPage";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import CategoryPage from './pages/CategoryPage';
 
 
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/buy" element={<BuyPage/>} />
         <Route path="/cart" element={<Cart/>} />
         <Route path="/checkout" element={<Checkout/>} />
+        <Route path="/product-category/:category" element={<CategoryPage />} />
       </Routes>
     </Router>
   );
