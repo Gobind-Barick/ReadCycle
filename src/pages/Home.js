@@ -18,7 +18,7 @@ const CATEGORIES = [
   { name: "Education", icon: "🎓" },
   { name: "Comics", icon: "🦸‍♂️" },
   { name: "Fantasy", icon: "🐉" },
-  { name: "Self-Help", icon: "💡" },
+  { name: "self-help", icon: "💡" },
 ];
 
 const promotionalBanners = [
@@ -50,7 +50,7 @@ const Home = () => {
   const carouselRef = useRef();
 
   useEffect(() => {
-    axios.get("https://localhost:8080/api/books")
+    axios.get("https://readcycle-backend-production.up.railway.app/api/books")
       .then((response) => {
         setBooks(response.data);
       })
