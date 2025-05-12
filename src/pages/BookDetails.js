@@ -8,10 +8,15 @@ const BookDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [book, setBook] = useState(null);
+  const [reviews, setReviews] = useState(book.reviews);
+  const [newReview, setNewReview] = useState("");
+  const [newRating, setNewRating] = useState(0);
 
   useEffect(() => {
     axios
-      .get(`https://readcycle-backend-production.up.railway.app/api/books/${id}`)
+      .get(
+        `https://readcycle-backend-production.up.railway.app/api/books/${id}`
+      )
       .then((res) => {
         setBook(res.data);
       })
@@ -20,11 +25,8 @@ const BookDetails = () => {
       });
   }, [id]);
 
-  if (!book) return <div className="p-10 text-center">Loading book details...</div>;
-
-  const [reviews, setReviews] = useState(book.reviews);
-  const [newReview, setNewReview] = useState("");
-  const [newRating, setNewRating] = useState(0);
+  if (!book)
+    return <div className="p-10 text-center">Loading book details...</div>;
 
   const handleSubmitReview = () => {
     if (newReview.trim() && newRating > 0) {
@@ -167,14 +169,12 @@ const BookDetails = () => {
           </button>
         </div>
       </section>
-
-        {book.authorBio && (
-          <>
-            <h3 className="text-xl font-semibold mt-6">About the Author</h3>
-            <p>{book.authorBio}</p>
-          </>
-        )}
-      </section>
+      {book.authorBio && (
+        <>
+          <h3 className="text-xl font-semibold mt-6">About the Author</h3>
+          <p>{book.authorBio}</p>
+        </>
+      )}
     </div>
   );
 };
