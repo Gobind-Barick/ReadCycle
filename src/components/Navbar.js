@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { FiSearch } from "react-icons/fi"; // use react-icons for the search icon
+import { Link, useNavigate } from "react-router-dom";
+import { FiSearch } from "react-icons/fi";
 import LoginModal from "./LoginModal";
 import SignupModal from "./SignupModal";
 
@@ -10,10 +10,15 @@ const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const navigate = useNavigate();
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    console.log("Searching for:", searchQuery);
-    // Add your routing or search logic here
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setShowSearch(false); // hide search box after submission
+      setSearchQuery("");   // clear input
+    }
   };
 
   return (

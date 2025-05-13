@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import BookCarousel from "../components/BookCarousel";
+//test
 
 const BookDetails = () => {
   const { id } = useParams();
@@ -14,7 +15,7 @@ const BookDetails = () => {
 
   useEffect(() => {
     axios
-      .get(`https://readcycle-backend-production.up.railway.app/api/books/${id}`)
+      .get(`http://localhost:8080/api/books/${id}`)
       .then((res) => {
         setBook(res.data);
         setReviews(res.data.reviews || []);
