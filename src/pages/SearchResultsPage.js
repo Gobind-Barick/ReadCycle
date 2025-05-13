@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import ProductCard from "../components/ProductCard";
+import { ProductCardNarrow } from "../components/ProductCard";
 
 const SearchResultsPage = () => {
   const location = useLocation();
@@ -60,9 +60,11 @@ const SearchResultsPage = () => {
         ) : results.length === 0 ? (
           <p className="text-center text-gray-600">No results found.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {results.map((book) => (
-              <ProductCard key={book.id} product={book} />
+              <Link to={`/book/${book.id}`}>
+                <ProductCardNarrow key={book.id} product={book} />
+              </Link>
             ))}
           </div>
         )}

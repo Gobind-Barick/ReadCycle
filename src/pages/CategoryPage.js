@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Navbar from "../components/Navbar";
-import ProductCard from "../components/ProductCard";
+import { ProductCardNarrow } from "../components/ProductCard";
 
 const CategoryPage = () => {
   const { category } = useParams(); // Get category from URL
@@ -11,7 +11,7 @@ const CategoryPage = () => {
   const [error, setError] = useState(null);
   const [sort, setSort] = useState("suggested");
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 12;
+  const productsPerPage = 30;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,7 +19,7 @@ const CategoryPage = () => {
         setLoading(true);
         setError(null);
         const response = await fetch(
-          `https://readcycle-backend-production.up.railway.app/api/books?genre=${category.replace(/-/g, ' ')}`
+          `http://localhost:8080/api/books?genre=${category.replace(/-/g, ' ')}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch books");
@@ -77,14 +77,16 @@ const CategoryPage = () => {
           </div>
 
           {/* Products Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {loading ? (
               <p className="col-span-full text-center text-gray-600">Loading...</p>
             ) : error ? (
               <p className="col-span-full text-center text-red-500">{error}</p>
             ) : currentProducts.length > 0 ? (
               currentProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <Link to={`/book/${product.id}`}>
+                  <ProductCardNarrow key={product.id} product={product} />
+                </Link>
               ))
             ) : (
               <p className="col-span-full text-center text-gray-600">
