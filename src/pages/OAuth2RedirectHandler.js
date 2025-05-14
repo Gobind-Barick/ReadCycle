@@ -1,34 +1,39 @@
 import React, { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/userSlice";
 
-const OAuth2RedirectHandler = ({ setUser }) => {
+const OAuth2RedirectHandler = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const token = params.get("token");
-    const name = params.get("name");
-    const email = params.get("email");
+    const userString = params.get("user");
 
-    if (token && name && email) {
-      const user = { name, email };
+    if (token && userString) {
+      try {
+        const user = JSON.parse(decodeURIComponent(userString));
 
-      // Save token and user in localStorage
-      localStorage.setItem("jwt", token);
-      localStorage.setItem("user", JSON.stringify(user));
+        // Save to localStorage
+        localStorage.setItem("jwt", token);
+        localStorage.setItem("user", JSON.stringify(user));
 
-      // Set user in app state
-      setUser(user);
+        // Update Redux state
+        dispatch(setUser(user));
 
-      // Redirect to home
-      navigate("/");
+        // Redirect to homepage
+        navigate("/");
+      } catch (error) {
+        console.error("Failed to parse user info:", error);
+        navigate("/");
+      }
     } else {
-      // Missing expected query params
-      console.error("Missing OAuth2 redirect parameters");
       navigate("/");
     }
-  }, [location, navigate, setUser]);
+  }, [location, navigate, dispatch]);
 
   return <div>Logging in...</div>;
 };

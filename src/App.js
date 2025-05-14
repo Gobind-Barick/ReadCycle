@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import BookDetails from "./pages/BookDetails";
@@ -9,22 +9,22 @@ import CategoryPage from './pages/CategoryPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 import OAuth2RedirectHandler from "./pages/OAuth2RedirectHandler";
 import Navbar from "./components/Navbar";
+import { useDispatch } from "react-redux";
+import { setUser } from "./redux/userSlice";
 
 function App() {
-  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
 
-  // Load user from localStorage on app load
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      dispatch(setUser(JSON.parse(storedUser)));
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <Router>
-      {/* Pass user and setUser to Navbar so it can update if needed */}
-      <Navbar user={user} setUser={setUser} />
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/book/:id" element={<BookDetails />} />
@@ -33,9 +33,7 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/product-category/:category" element={<CategoryPage />} />
         <Route path="/search" element={<SearchResultsPage />} />
-        
-        {/* Pass setUser to update state after OAuth2 login */}
-        <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler setUser={setUser} />} />
+        <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
       </Routes>
     </Router>
   );
