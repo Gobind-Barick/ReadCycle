@@ -4,7 +4,7 @@ import Slider from "react-slick";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import BookCarousel from "../components/BookCarousel";
-import Footer from '../components/Footer';
+import Footer from "../components/Footer";
 import SellProcessSection from "../components/ProcessSection";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 
@@ -31,7 +31,7 @@ const promotionalBanners = [
   },
   {
     id: 2,
-    title: "Declutter Your Shelf",  
+    title: "Declutter Your Shelf",
     subtitle: "Sell your old books easily and earn money",
     image: "https://via.placeholder.com/1200x400?text=Sell+Books",
     button: "Start Selling",
@@ -50,7 +50,8 @@ const Home = () => {
   const carouselRef = useRef();
 
   useEffect(() => {
-    axios.get("https://localhost:8080/api/books")
+    axios
+      .get("https://readcycle-backend-production.up.railway.app/api/books")
       .then((response) => {
         setBooks(response.data);
       })
@@ -59,11 +60,13 @@ const Home = () => {
       });
   }, []);
 
-
   const scrollCarousel = (direction) => {
     if (carouselRef.current) {
       const scrollAmount = 200;
-      carouselRef.current.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
+      carouselRef.current.scrollBy({
+        left: direction * scrollAmount,
+        behavior: "smooth",
+      });
     }
   };
 
@@ -87,9 +90,15 @@ const Home = () => {
         <Slider {...carouselSettings}>
           {promotionalBanners.map((banner) => (
             <div key={banner.id} className="relative">
-              <img src={banner.image} alt={banner.title} className="w-full h-64 md:h-96 object-cover" />
+              <img
+                src={banner.image}
+                alt={banner.title}
+                className="w-full h-64 md:h-96 object-cover"
+              />
               <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white text-center px-4">
-                <h2 className="text-2xl md:text-4xl font-bold mb-2">{banner.title}</h2>
+                <h2 className="text-2xl md:text-4xl font-bold mb-2">
+                  {banner.title}
+                </h2>
                 <p className="text-md md:text-lg mb-4">{banner.subtitle}</p>
                 <button className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm md:text-base">
                   {banner.button}
@@ -122,14 +131,16 @@ const Home = () => {
             {CATEGORIES.map((cat) => {
               const slug = cat.name.toLowerCase().replace(/\s+/g, "-");
               return (
-                  <Link
-                    to={`/product-category/${slug}`}
-                    key={cat.name}
-                    className="min-w-[140px] bg-gray-900 p-5 rounded-xl shadow text-center flex-shrink-0 hover:shadow-lg transform hover:scale-105 transition-all duration-200"
-                  >
-                    <div className="text-3xl mb-2">{cat.icon}</div>
-                    <p className="text-sm font-medium text-gray-100">{cat.name}</p>
-                  </Link>
+                <Link
+                  to={`/product-category/${slug}`}
+                  key={cat.name}
+                  className="min-w-[140px] bg-gray-900 p-5 rounded-xl shadow text-center flex-shrink-0 hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                >
+                  <div className="text-3xl mb-2">{cat.icon}</div>
+                  <p className="text-sm font-medium text-gray-100">
+                    {cat.name}
+                  </p>
+                </Link>
               );
             })}
           </div>
@@ -145,14 +156,20 @@ const Home = () => {
       </section>
 
       {/* Book Carousels */}
-      <BookCarousel title="📚 Best Sellers" books={books.slice(1,10 )} />
-      <BookCarousel title="🔥 Top Deals" books={books.filter((b) => b.price < 400)} />
-      <BookCarousel title="💸 Books Under ₹300" books={books.filter((b) => b.price <= 300)} />
+      <BookCarousel title="📚 Best Sellers" books={books.slice(1, 10)} />
+      <BookCarousel
+        title="🔥 Top Deals"
+        books={books.filter((b) => b.price < 400)}
+      />
+      <BookCarousel
+        title="💸 Books Under ₹300"
+        books={books.filter((b) => b.price <= 300)}
+      />
 
       {/* 🛍️ Sell Your Books Section */}
 
-          <SellProcessSection/>
-  <Footer/>
+      <SellProcessSection />
+      <Footer />
     </div>
   );
 };
