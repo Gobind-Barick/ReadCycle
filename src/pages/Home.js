@@ -80,9 +80,9 @@ const Home = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="min-h-screen">
       <Navbar />
-
+      
       {/* Hero/Promotional Carousel */}
       <section className="relative">
         <Slider {...carouselSettings}>
@@ -148,7 +148,7 @@ const Home = () => {
 
       {/* 🛍️ Sell Your Books Section */}
 
-      <section className="bg-white py-16 px-6 md:px-20 mt-10 shadow-inner">
+      <section className="py-16 px-6 md:px-20 mt-10 shadow-inner">
         <SellProcessSection />
       </section>
 

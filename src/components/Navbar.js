@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FiSearch } from "react-icons/fi"; // use react-icons for the search icon
 import LoginModal from "./LoginModal";
 import SignupModal from "./SignupModal";
+import ModeComponent from "./Mode";
 
 const Navbar = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -18,8 +19,8 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-white shadow-md px-4 md:px-10 py-4 flex items-center justify-between">
-        <Link to="/" className="text-2xl font-bold text-blue-600">
+      <nav className="shadow-md px-4 md:px-10 py-4 flex items-center justify-between">
+        <Link to="/" className="text-2xl font-bold">
           BookNook
         </Link>
 
@@ -42,6 +43,7 @@ const Navbar = () => {
             </form>
           )}
 
+          <ModeComponent />
           <Link to="/">Buy</Link>
           <Link to="/sell">Sell</Link>
           <button onClick={() => setShowLogin(true)}>Login</button>

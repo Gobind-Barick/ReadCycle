@@ -1,49 +1,30 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { 
+  incrementQuantity, 
+  decrementQuantity, 
+  removeItem,
+  selectCartItems,
+  selectCartTotal
+} from "../features/cart/cartSlice";
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      title: "Atomic Habits",
-      price: 450,
-      condition: "Good",
-      image: "https://via.placeholder.com/100x130",
-      quantity: 1,
-    },
-    {
-      id: 2,
-      title: "1984",
-      price: 250,
-      condition: "Fair",
-      image: "https://via.placeholder.com/100x130",
-      quantity: 1,
-    },
-  ]);
+  const cartItems = useSelector(selectCartItems);
+  const total = useSelector(selectCartTotal);
+  const dispatch = useDispatch();
 
   const handleIncrement = (id) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
+    dispatch(incrementQuantity(id));
   };
 
   const handleDecrement = (id) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
-    );
+    dispatch(decrementQuantity(id));
   };
 
   const handleRemove = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
+    dispatch(removeItem(id));
   };
-
-  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   return (
     <div className="container mx-auto px-4 py-10">
