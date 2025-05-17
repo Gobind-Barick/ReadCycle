@@ -211,12 +211,15 @@ const UserProfilePage = () => {
             >
               <p><strong>Order ID:</strong> {order.id}</p>
               <p><strong>Date:</strong> {new Date(order.orderDate).toLocaleDateString()}</p>
-              <p><strong>Status:</strong> {order.status}</p>
+              <p><strong>Status:</strong> {order.status || "Pending"}</p>
               <ul style={{ paddingLeft: "1rem" }}>
-                {order.items.map((item, index) => (
+                {order.items && order.items.map((item, index) => (
                   <li key={index} style={{ marginBottom: "0.5rem" }}>
-                    <p><strong>Title:</strong> {item.bookTitle}</p>
-                    <p>Quantity: {item.quantity} | Price: ₹{item.price}</p>
+                    <p>
+                      <strong>Title:</strong> {item.title}<br />
+                      <strong>Author:</strong> {item.author}<br />
+                      Quantity: {item.quantity} | Price: ₹{item.price}
+                    </p>
                   </li>
                 ))}
               </ul>
