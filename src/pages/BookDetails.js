@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import BookCarousel from "../components/BookCarousel";
+import { addToCart } from "../redux/cartSlice";
 
 const BookDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [book, setBook] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -30,13 +33,12 @@ const BookDetails = () => {
     fetchBook();
   }, [id]);
 
-  if (loading) {
-    return <div className="p-10 text-center">Loading book details...</div>;
-  }
-
-  if (!book) {
-    return <div className="p-10 text-center text-red-600">Book not found.</div>;
-  }
+  const handleAddToCart = () => {
+    if (book) {
+      dispatch(addToCart({ ...book, quantity: 1 }));
+      navigate("/cart");
+    }
+  };
 
   const handleSubmitReview = () => {
     if (newReview.trim() && newRating > 0) {
@@ -63,6 +65,14 @@ const BookDetails = () => {
     }
   };
 
+  if (loading) {
+    return <div className="p-10 text-center">Loading book details...</div>;
+  }
+
+  if (!book) {
+    return <div className="p-10 text-center text-red-600">Book not found.</div>;
+  }
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <Navbar />
@@ -86,7 +96,7 @@ const BookDetails = () => {
           </div>
           <div className="mt-4">
             <button
-              onClick={() => navigate("/cart")}
+              onClick={handleAddToCart}
               className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
             >
               Add to Cart

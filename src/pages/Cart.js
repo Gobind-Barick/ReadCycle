@@ -1,13 +1,21 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { 
-  incrementQuantity, 
-  decrementQuantity, 
-  removeItem,
-  selectCartItems,
-  selectCartTotal
-} from "../features/cart/cartSlice";
+import {
+  incrementQuantity,
+  decrementQuantity,
+  removeFromCart,
+} from "../redux/cartSlice"; // Adjust path if needed
+
+// Safe selector for cart items
+const selectCartItems = (state) => state.cart?.items || [];
+
+// Total selector based on items
+const selectCartTotal = (state) =>
+  (state.cart?.items || []).reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
 
 const Cart = () => {
   const cartItems = useSelector(selectCartItems);
@@ -23,7 +31,7 @@ const Cart = () => {
   };
 
   const handleRemove = (id) => {
-    dispatch(removeItem(id));
+    dispatch(removeFromCart(id));
   };
 
   return (
@@ -35,8 +43,15 @@ const Cart = () => {
         <>
           <div className="space-y-6">
             {cartItems.map((item) => (
-              <div key={item.id} className="flex items-center bg-white shadow p-4 rounded">
-                <img src={item.image} alt={item.title} className="w-24 h-32 object-cover rounded mr-4" />
+              <div
+                key={item.id}
+                className="flex items-center bg-white shadow p-4 rounded"
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-24 h-32 object-cover rounded mr-4"
+                />
                 <div className="flex-1">
                   <h2 className="text-xl font-semibold">{item.title}</h2>
                   <p className="text-gray-600">Condition: {item.condition}</p>
