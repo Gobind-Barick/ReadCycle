@@ -4,7 +4,7 @@ import Slider from "react-slick";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import BookCarousel from "../components/BookCarousel";
-import Footer from '../components/Footer';
+import Footer from "../components/Footer";
 import SellProcessSection from "../components/ProcessSection";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 
@@ -31,7 +31,7 @@ const promotionalBanners = [
   },
   {
     id: 2,
-    title: "Declutter Your Shelf",  
+    title: "Declutter Your Shelf",
     subtitle: "Sell your old books easily and earn money",
     image: "https://via.placeholder.com/1200x400?text=Sell+Books",
     button: "Start Selling",
@@ -59,7 +59,6 @@ const Home = () => {
       });
   }, []);
 
-
   const scrollCarousel = (direction) => {
     if (carouselRef.current) {
       const scrollAmount = 200;
@@ -79,7 +78,7 @@ const Home = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="min-h-screen bg-gray-50">
       
 
       {/* Hero/Promotional Carousel */}
@@ -103,9 +102,7 @@ const Home = () => {
       {/* Categories Carousel with Arrows */}
       <section className="py-12 px-6 sm:px-10 relative bg-gray-50">
         <h2 className="text-2xl font-bold mb-8 text-center">Top Categories</h2>
-
         <div className="relative flex items-center">
-          {/* Left Button */}
           <button
             onClick={() => scrollCarousel(-1)}
             className="absolute left-2 z-20 bg-white/80 backdrop-blur shadow-md p-3 rounded-full hover:bg-white transition"
@@ -113,7 +110,6 @@ const Home = () => {
             <FaChevronLeft />
           </button>
 
-          {/* Scrollable Category Items */}
           <div
             ref={carouselRef}
             className="flex overflow-x-auto gap-4 px-6 sm:px-10 py-4 scroll-smooth"
@@ -122,19 +118,18 @@ const Home = () => {
             {CATEGORIES.map((cat) => {
               const slug = cat.name.toLowerCase().replace(/\s+/g, "-");
               return (
-                  <Link
-                    to={`/product-category/${slug}`}
-                    key={cat.name}
-                    className="min-w-[140px] bg-gray-900 p-5 rounded-xl shadow text-center flex-shrink-0 hover:shadow-lg transform hover:scale-105 transition-all duration-200"
-                  >
-                    <div className="text-3xl mb-2">{cat.icon}</div>
-                    <p className="text-sm font-medium text-gray-100">{cat.name}</p>
-                  </Link>
+                <Link
+                  to={`/product-category/${slug}`}
+                  key={cat.name}
+                  className="min-w-[140px] bg-gray-900 p-5 rounded-xl shadow text-center flex-shrink-0 hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                >
+                  <div className="text-3xl mb-2">{cat.icon}</div>
+                  <p className="text-sm font-medium text-gray-100">{cat.name}</p>
+                </Link>
               );
             })}
           </div>
 
-          {/* Right Button */}
           <button
             onClick={() => scrollCarousel(1)}
             className="absolute right-2 z-20 bg-white/80 backdrop-blur shadow-md p-3 rounded-full hover:bg-white transition"
@@ -145,14 +140,16 @@ const Home = () => {
       </section>
 
       {/* Book Carousels */}
-      <BookCarousel title="📚 Best Sellers" books={books.slice(1,10 )} />
+      <BookCarousel title="📚 Best Sellers" books={books.slice(1, 10)} />
       <BookCarousel title="🔥 Top Deals" books={books.filter((b) => b.price < 400)} />
       <BookCarousel title="💸 Books Under ₹300" books={books.filter((b) => b.price <= 300)} />
 
-      {/* 🛍️ Sell Your Books Section */}
+      {/* Sell Your Books Section */}
+      <section className="py-16 px-6 md:px-20 mt-10 shadow-inner">
+        <SellProcessSection />
+      </section>
 
-          <SellProcessSection/>
-  <Footer/>
+      <Footer />
     </div>
   );
 };
