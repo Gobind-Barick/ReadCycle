@@ -11,6 +11,7 @@ import OAuth2RedirectHandler from "./pages/OAuth2RedirectHandler";
 import Navbar from "./components/Navbar";
 import { useDispatch } from "react-redux";
 import { setUser } from "./redux/userSlice";
+import UserProfilePage from "./pages/UserProfilePage";
 
 function App() {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ function App() {
         <Route path="/product-category/:category" element={<CategoryPage />} />
         <Route path="/search" element={<SearchResultsPage />} />
         <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
+        <Route path="/profile" element={<UserProfilePage />} />
       </Routes>
     </Router>
   );

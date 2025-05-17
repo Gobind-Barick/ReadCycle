@@ -1,20 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import LoginModal from "./LoginModal";
 import SignupModal from "./SignupModal";
 import { useSelector, useDispatch } from "react-redux";
-import {logout } from "../redux/userSlice";
+import { logout } from "../redux/userSlice";
 
 const Navbar = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dropdownRef = useRef();
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -30,6 +32,16 @@ const Navbar = () => {
     window.location.reload();
     window.location.href = "http://localhost:8080/api/logout";
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <>
@@ -61,19 +73,30 @@ const Navbar = () => {
           {!user ? (
             <button onClick={() => setShowLogin(true)}>Login</button>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="relative" ref={dropdownRef}>
               <img
+                onClick={() => setDropdownOpen((prev) => !prev)}
                 src={user.avatarUrl || "https://www.gravatar.com/avatar/?d=mp"}
                 alt="User avatar"
-                className="w-8 h-8 rounded-full"
+                className="w-8 h-8 rounded-full cursor-pointer"
               />
-              <span className="text-sm text-gray-700">Hi, {user.name || "User"}</span>
-              <button
-                onClick={handleLogout}
-                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-              >
-                Logout
-              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg py-2 z-10">
+                  <Link
+                    to="/profile"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
