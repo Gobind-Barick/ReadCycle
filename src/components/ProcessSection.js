@@ -28,10 +28,10 @@ const sellingSteps = [
   },
 ];
 
-const SellProcessSection = () => {
+const ProcessSection = () => {
   return (
-    <section className="bg-white py-16 px-6 md:px-20 mt-10">
-      <h2 className="text-3xl font-bold text-gray-800 text-center mb-12">How to Sell Your Books</h2>
+    <section className="py-16 px-6 md:px-20 mt-10">
+      <h2 className="text-3xl font-bold text-center mb-12">How to Sell Your Books</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
         {sellingSteps.map((step, index) => (
@@ -56,4 +56,4 @@ const SellProcessSection = () => {
   );
 };
 
-export default SellProcessSection;
+export default ProcessSection;

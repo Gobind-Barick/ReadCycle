@@ -79,6 +79,10 @@ const Home = () => {
   };
 
   return (
+
+    <div className="min-h-screen">
+      <Navbar />
+      
     <div className="bg-gray-50 min-h-screen">
       
 
@@ -151,8 +155,16 @@ const Home = () => {
 
       {/* 🛍️ Sell Your Books Section */}
 
+<
+      <section className="py-16 px-6 md:px-20 mt-10 shadow-inner">
+        <SellProcessSection />
+      </section>
+
+      <Footer />
+
           <SellProcessSection/>
   <Footer/>
+
     </div>
   );
 };
