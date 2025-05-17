@@ -175,7 +175,6 @@ const Home = () => {
       </section>
 
 
-      <SellProcessSection />
 
       <Footer />
     </div>

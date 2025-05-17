@@ -5,7 +5,6 @@ import BookDetails from "./pages/BookDetails";
 import BuyPage from "./pages/BuyPage";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
-
 import CategoryPage from "./pages/CategoryPage";
 import AboutUs from "./pages/AboutUs";
 import TermsAndCondition from "./pages/TermsAndCondition";
@@ -14,11 +13,7 @@ import Categories from "./pages/Categories";
 import Faq from "./pages/Faq";
 import ReturnRefundPolicy from "./pages/ReturnRefundPolicy";
 import ContactUs from "./pages/ContactUs";
-
-function App() {
-
-import CategoryPage from './pages/CategoryPage';
-import SearchResultsPage from './pages/SearchResultsPage';
+import SearchResultsPage from "./pages/SearchResultsPage";
 import OAuth2RedirectHandler from "./pages/OAuth2RedirectHandler";
 import Navbar from "./components/Navbar";
 import { useDispatch } from "react-redux";
@@ -35,7 +30,6 @@ function App() {
     }
   }, [dispatch]);
 
-
   return (
     <Router>
       <Navbar />
@@ -46,8 +40,6 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/product-category/:category" element={<CategoryPage />} />
-
-        <Route path="/book/:id" element={<BookDetails />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/terms" element={<TermsAndCondition />} />
         <Route path="/sell" element={<Sell />} />
@@ -58,7 +50,6 @@ function App() {
         <Route path="/search" element={<SearchResultsPage />} />
         <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
         <Route path="/profile" element={<UserProfilePage />} />
-
       </Routes>
     </Router>
   );
