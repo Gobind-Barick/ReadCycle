@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  user: null,
+  user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
   token: localStorage.getItem("jwt") || null,
 };
 
@@ -13,6 +13,12 @@ const userSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
       localStorage.setItem("user", JSON.stringify(action.payload));
+
+      // If token already exists and profile page hasn't been reloaded, force reload once
+      if (typeof window !== "undefined" && localStorage.getItem("jwt") && !sessionStorage.getItem("profilePageReloaded")) {
+        sessionStorage.setItem("profilePageReloaded", "true");
+        window.location.reload();
+      }
     },
     setToken: (state, action) => {
       state.token = action.payload;
@@ -23,6 +29,11 @@ const userSlice = createSlice({
       state.token = null;
       localStorage.removeItem("user");
       localStorage.removeItem("jwt");
+
+      // Clear sessionStorage reload flag on logout
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("profilePageReloaded");
+      }
     },
   },
 });

@@ -1,9 +1,9 @@
 // src/pages/UserProfilePage.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
-const  UserProfilePage = () => {
+const UserProfilePage = () => {
   const user = useSelector((state) => state.user.user);
   const token = useSelector((state) => state.user.token);
 
@@ -19,34 +19,45 @@ const  UserProfilePage = () => {
     phone: "",
     isDefault: false,
   });
+  const [loading, setLoading] = useState(true);
+
+  const retryTimeoutRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!token) return;
-
-      try {
-        console.log("got addresss");
-        const addressRes = await axios.get("http://localhost:8080/api/addresses", {
-          headers: { Authorization: `Bearer ${token}` },
-          
-        });
-        setAddresses(addressRes.data);
-      } catch (err) {
-        console.error("Failed to load addresses", err);
+      if (!token || !user) {
+        // Retry after 100ms if token or user not ready
+        retryTimeoutRef.current = setTimeout(fetchData, 10);
+        return;
       }
 
+      setLoading(true);
       try {
+        const addressRes = await axios.get("http://localhost:8080/api/addresses", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setAddresses(addressRes.data);
+
         const ordersRes = await axios.get("http://localhost:8080/api/orders", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setOrders(ordersRes.data);
       } catch (err) {
-        console.error("Failed to load orders", err);
+        console.error("Failed to load addresses or orders", err);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, [token]);
+
+    // Cleanup on unmount
+    return () => {
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+      }
+    };
+  }, [token, user]);
 
   const handleAddAddress = async (e) => {
     e.preventDefault();
@@ -80,6 +91,10 @@ const  UserProfilePage = () => {
       console.error("Failed to delete address", err);
     }
   };
+
+  if (loading) {
+    return <div style={{ padding: "2rem", textAlign: "center" }}>Loading profile data...</div>;
+  }
 
   return (
     <div style={{ padding: "2rem", maxWidth: "900px", margin: "0 auto" }}>
