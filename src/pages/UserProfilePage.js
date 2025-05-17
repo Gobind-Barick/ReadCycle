@@ -1,4 +1,3 @@
-// src/pages/UserProfilePage.js
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -20,13 +19,13 @@ const UserProfilePage = () => {
     isDefault: false,
   });
   const [loading, setLoading] = useState(true);
+  const [deletingAddressId, setDeletingAddressId] = useState(null);
 
   const retryTimeoutRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
       if (!token || !user) {
-        // Retry after 100ms if token or user not ready
         retryTimeoutRef.current = setTimeout(fetchData, 10);
         return;
       }
@@ -50,8 +49,6 @@ const UserProfilePage = () => {
     };
 
     fetchData();
-
-    // Cleanup on unmount
     return () => {
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current);
@@ -78,17 +75,31 @@ const UserProfilePage = () => {
       });
     } catch (err) {
       console.error("Failed to add address", err);
+      alert("Failed to add address.");
     }
   };
 
   const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this address?");
+    if (!confirmDelete) return;
+
+    setDeletingAddressId(id);
     try {
       await axios.delete(`http://localhost:8080/api/addresses/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setAddresses(addresses.filter((addr) => addr.id !== id));
+      setAddresses((prev) => prev.filter((addr) => addr.id !== id));
     } catch (err) {
-      console.error("Failed to delete address", err);
+      if (err.response?.status === 403) {
+        alert("You are not authorized to delete this address.");
+      } else if (err.response?.status === 404) {
+        alert("Address not found or already deleted.");
+      } else {
+        console.error("Failed to delete address", err);
+        alert("An error occurred while deleting the address.");
+      }
+    } finally {
+      setDeletingAddressId(null);
     }
   };
 
@@ -133,6 +144,7 @@ const UserProfilePage = () => {
             {address.isDefault && <p><em>Default Address</em></p>}
             <button
               onClick={() => handleDelete(address.id)}
+              disabled={deletingAddressId === address.id}
               style={{
                 marginTop: "0.5rem",
                 backgroundColor: "red",
@@ -141,9 +153,10 @@ const UserProfilePage = () => {
                 padding: "0.4rem 0.8rem",
                 borderRadius: "4px",
                 cursor: "pointer",
+                opacity: deletingAddressId === address.id ? 0.6 : 1,
               }}
             >
-              Delete
+              {deletingAddressId === address.id ? "Deleting..." : "Delete"}
             </button>
           </li>
         ))}
