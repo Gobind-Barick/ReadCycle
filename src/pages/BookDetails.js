@@ -1,81 +1,68 @@
-import React from "react";
-import { useLocation,useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import Navbar from "../components/Navbar";
 import BookCarousel from "../components/BookCarousel";
-
-// Mock book data
-const mockBook = {
-  id: 1,
-  title: "Atomic Habits",
-  author: "James Clear",
-  price: 450,
-  description:
-    "An easy & proven way to build good habits and break bad ones. This book is a must-read for anyone looking to improve their life through small but impactful changes.",
-  image: "https://via.placeholder.com/300x400?text=Atomic+Habits",
-  publisher: "Penguin Books",
-  isbn: "978-0-7352-1141-2",
-  language: "English",
-  genre: "Self-Help",
-  pages: 320,
-  format: "Hardcover",
-  authorBio:
-    "James Clear is a writer and speaker focused on habits, decision-making, and continuous improvement. His work has been featured in The New York Times, Time Magazine, and more.",
-  averageRating: 4.7,
-  reviews: [
-    {
-      username: "JohnDoe",
-      rating: 5,
-      comment: "Incredible book! It changed my life."
-    },
-    {
-      username: "JaneDoe",
-      rating: 4,
-      comment: "Very helpful, but a bit repetitive in some areas."
-    },
-    {
-      username: "AliceSmith",
-      rating: 5,
-      comment: "I love how actionable the advice is. Highly recommended!"
-    }
-  ],
-  relatedBooks: [
-    {
-      id: 2,
-      title: "The Power of Habit",
-      author: "Charles Duhigg",
-      price: 399,
-      image: "https://via.placeholder.com/300x400?text=The+Power+of+Habit"
-    },
-    {
-      id: 3,
-      title: "Deep Work",
-      author: "Cal Newport",
-      price: 499,
-      image: "https://via.placeholder.com/300x400?text=Deep+Work"
-    },
-    {
-      id: 4,
-      title: "Mindset: The New Psychology of Success",
-      author: "Carol S. Dweck",
-      price: 450,
-      image: "https://via.placeholder.com/300x400?text=Mindset"
-    }
-  ]
-};
+//test
 
 const BookDetails = () => {
-  const book = mockBook;
+  const { id } = useParams();
   const navigate = useNavigate();
+  const [book, setBook] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [newReview, setNewReview] = useState("");
+  const [newRating, setNewRating] = useState(0);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8080/api/books/${id}`)
+      .then((res) => {
+        setBook(res.data);
+        setReviews(res.data.reviews || []);
+      })
+      .catch((err) => {
+        console.error("Failed to load book:", err);
+      });
+  }, [id]);
+
+  const handleSubmitReview = () => {
+    if (newReview.trim() && newRating > 0) {
+      const updatedReviews = [...reviews];
+      const existingIndex = updatedReviews.findIndex(
+        (r) => r.username === "You"
+      );
+
+      const newEntry = {
+        username: "You",
+        rating: newRating,
+        comment: newReview,
+      };
+
+      if (existingIndex >= 0) {
+        updatedReviews[existingIndex] = newEntry;
+      } else {
+        updatedReviews.push(newEntry);
+      }
+
+      setReviews(updatedReviews);
+      setNewReview("");
+      setNewRating(0);
+    }
+  };
+
+  if (!book) {
+    return <div className="p-10 text-center">Loading book details...</div>;
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen">
       <Navbar />
-      
+
       {/* Hero Section */}
       <section className="flex flex-col md:flex-row justify-between py-10 px-6">
         <div className="w-full md:w-1/3">
           <img
-            src={book.image}
+            src={book.imageUrl}
             alt={book.title}
             className="w-full h-96 object-cover rounded-lg shadow-md"
           />
@@ -89,12 +76,12 @@ const BookDetails = () => {
             <span className="text-sm text-gray-500">In stock</span>
           </div>
           <div className="mt-4">
-          <button
-  onClick={() => navigate("/cart")}
-  className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
->
-  Add to Cart
-</button>
+            <button
+              onClick={() => navigate("/cart")}
+              className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+            >
+              Add to Cart
+            </button>
           </div>
         </div>
       </section>
@@ -116,41 +103,56 @@ const BookDetails = () => {
       <section className="py-10 px-6 bg-white shadow-md mb-10">
         <h2 className="text-2xl font-bold mb-4">Description</h2>
         <p>{book.description}</p>
-        <h3 className="text-xl font-semibold mt-6">About the Author</h3>
-        <p>{book.authorBio}</p>
+        {book.authorBio && (
+          <>
+            <h3 className="text-xl font-semibold mt-6">About the Author</h3>
+            <p>{book.authorBio}</p>
+          </>
+        )}
       </section>
 
       {/* Customer Reviews */}
       <section className="py-10 px-6 bg-white shadow-md mb-10">
         <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
-        <div>
-          <p className="text-sm">Average Rating: {book.averageRating} / 5</p>
-          {/* Loop through reviews */}
-          {book.reviews.map((review, index) => (
-            <div key={index} className="mt-4 border-t pt-4">
-              <p className="text-md font-semibold">{review.username}</p>
-              <p className="text-sm">{review.comment}</p>
-              <p className="text-sm text-gray-500">Rating: {review.rating} / 5</p>
-            </div>
-          ))}
-        </div>
+        <p className="text-sm">Average Rating: {book.averageRating} / 5</p>
+
+        {reviews.map((review, index) => (
+          <div key={index} className="mt-4 border-t pt-4">
+            <p className="text-md font-semibold">{review.username}</p>
+            <p className="text-sm">{review.comment}</p>
+            <p className="text-sm text-gray-500">Rating: {review.rating} / 5</p>
+          </div>
+        ))}
+
         <div className="mt-6">
           <h3 className="text-xl font-semibold">Write a Review</h3>
+          <div className="flex items-center mt-2 space-x-1">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                onClick={() => setNewRating(star)}
+                className={`text-2xl ${
+                  newRating >= star ? "text-yellow-500" : "text-gray-300"
+                } focus:outline-none`}
+              >
+                ★
+              </button>
+            ))}
+          </div>
           <textarea
             rows="4"
             className="w-full p-3 mt-2 border border-gray-300 rounded-lg"
             placeholder="Your review here..."
+            value={newReview}
+            onChange={(e) => setNewReview(e.target.value)}
           />
-          <button className="mt-4 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+          <button
+            onClick={handleSubmitReview}
+            className="mt-4 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+          >
             Submit Review
           </button>
         </div>
-      </section>
-
-      {/* Related Books */}
-      <section className="py-10 px-6">
-        <h2 className="text-2xl font-bold mb-6">Related Books</h2>
-        <BookCarousel title="You Might Also Like" books={book.relatedBooks} />
       </section>
     </div>
   );

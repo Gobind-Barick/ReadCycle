@@ -1,36 +1,59 @@
-// src/components/BookCarousel.js
 import React from "react";
 import Slider from "react-slick";
 import { Link } from "react-router-dom";
+import { ProductCardNarrow } from "./ProductCard";
+import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
+
+
+const NextArrow = ({ onClick }) => (
+  <div
+    className="absolute -right-10 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800 text-white p-2 rounded-full cursor-pointer hover:bg-gray-600"
+    onClick={onClick}
+  >
+    <FaChevronRight />
+  </div>
+);
+
+const PrevArrow = ({ onClick }) => (
+  <div
+    className="absolute -left-10 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800 text-white p-2 rounded-full cursor-pointer hover:bg-gray-600"
+    onClick={onClick}
+  >
+    <FaChevronLeft />
+  </div>
+);
 
 const BookCarousel = ({ title, books }) => {
   const settings = {
-    infinite: false,
-    speed: 500,
-    slidesToShow: 3,
+    infinite: true,
+    slidesToShow: 6,
+    speed: 600,
     slidesToScroll: 1,
+    autoplay: true,              // enables auto sliding
+    autoplaySpeed: 2500,         // slide every 2.5 seconds
     arrows: true,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
     responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 640, settings: { slidesToShow: 1 } },
+      { breakpoint: 1270, settings: { slidesToShow: 5 } },
+      { breakpoint: 1070, settings: { slidesToShow: 4 } },
+      { breakpoint:  870, settings: { slidesToShow: 3 } },
+      { breakpoint:  670, settings: { slidesToShow: 2 } },
+      { breakpoint:  470, settings: { slidesToShow: 1 } },
     ],
   };
 
   return (
-    <div className="my-10 px-4">
+    <div className="max-w-7xl mx-auto px-6 bg-gray-50">
       <h2 className="text-2xl font-semibold mb-4">{title}</h2>
-      <Slider {...settings}>
+      <Slider className="overflow-visible" {...settings}>
         {books.map((book) => (
-          <div key={book.id} className="px-2">
-            <div className="bg-white rounded-lg shadow hover:shadow-xl p-4 h-full">
-              <img src="https://via.placeholder.com/150" alt={book.title} className="w-full h-40 object-cover rounded" />
-              <h3 className="text-lg font-semibold mt-2">{book.title}</h3>
-              <p className="text-sm text-gray-600">{book.author}</p>
-              <p className="text-green-700 font-bold mt-1">₹{book.price}</p>
-              <Link to={`/book/${book.id}`} className="text-blue-500 text-sm mt-2 inline-block">
-                View Details
-              </Link>
-            </div>
+          <div key={book.id} className="px-2 overflow-visible">
+            <Link className="overflow-visible" to={`/book/${book.id}`}>
+              <div className="my-4">
+                <ProductCardNarrow product={book} />
+              </div>
+            </Link>
           </div>
         ))}
       </Slider>
