@@ -3,30 +3,39 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import BookCarousel from "../components/BookCarousel";
+//test
 
 const BookDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [book, setBook] = useState(null);
+
   const [reviews, setReviews] = useState(book.reviews);
+
+  
+
   const [newReview, setNewReview] = useState("");
   const [newRating, setNewRating] = useState(0);
 
   useEffect(() => {
     axios
-      .get(
-        `https://readcycle-backend-production.up.railway.app/api/books/${id}`
-      )
+
+      .get(`http://localhost:8080/api/books/${id}`)
+
       .then((res) => {
         setBook(res.data);
+        setReviews(res.data.reviews || []);
       })
       .catch((err) => {
         console.error("Failed to load book:", err);
       });
   }, [id]);
 
+
   if (!book)
     return <div className="p-10 text-center">Loading book details...</div>;
+
+
 
   const handleSubmitReview = () => {
     if (newReview.trim() && newRating > 0) {
@@ -42,10 +51,8 @@ const BookDetails = () => {
       };
 
       if (existingIndex >= 0) {
-        // Replace the existing review
         updatedReviews[existingIndex] = newEntry;
       } else {
-        // Add new review
         updatedReviews.push(newEntry);
       }
 
@@ -54,6 +61,10 @@ const BookDetails = () => {
       setNewRating(0);
     }
   };
+
+  if (!book) {
+    return <div className="p-10 text-center">Loading book details...</div>;
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -91,24 +102,12 @@ const BookDetails = () => {
       <section className="py-10 px-6 bg-white shadow-md mb-10">
         <h2 className="text-2xl font-bold mb-4">Specifications</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <div>
-            <strong>Publisher:</strong> {book.publisher}
-          </div>
-          <div>
-            <strong>ISBN:</strong> {book.isbn}
-          </div>
-          <div>
-            <strong>Language:</strong> {book.language}
-          </div>
-          <div>
-            <strong>Genre:</strong> {book.genre}
-          </div>
-          <div>
-            <strong>Pages:</strong> {book.pages}
-          </div>
-          <div>
-            <strong>Format:</strong> {book.format}
-          </div>
+          <div><strong>Publisher:</strong> {book.publisher}</div>
+          <div><strong>ISBN:</strong> {book.isbn}</div>
+          <div><strong>Language:</strong> {book.language}</div>
+          <div><strong>Genre:</strong> {book.genre}</div>
+          <div><strong>Pages:</strong> {book.pages}</div>
+          <div><strong>Format:</strong> {book.format}</div>
         </div>
       </section>
 
@@ -116,8 +115,12 @@ const BookDetails = () => {
       <section className="py-10 px-6 bg-white shadow-md mb-10">
         <h2 className="text-2xl font-bold mb-4">Description</h2>
         <p>{book.description}</p>
-        <h3 className="text-xl font-semibold mt-6">About the Author</h3>
-        <p>{book.authorBio}</p>
+        {book.authorBio && (
+          <>
+            <h3 className="text-xl font-semibold mt-6">About the Author</h3>
+            <p>{book.authorBio}</p>
+          </>
+        )}
       </section>
 
       {/* Customer Reviews */}
@@ -135,8 +138,6 @@ const BookDetails = () => {
 
         <div className="mt-6">
           <h3 className="text-xl font-semibold">Write a Review</h3>
-
-          {/* Star Rating Selector */}
           <div className="flex items-center mt-2 space-x-1">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -150,8 +151,6 @@ const BookDetails = () => {
               </button>
             ))}
           </div>
-
-          {/* Review Textarea */}
           <textarea
             rows="4"
             className="w-full p-3 mt-2 border border-gray-300 rounded-lg"
@@ -159,8 +158,6 @@ const BookDetails = () => {
             value={newReview}
             onChange={(e) => setNewReview(e.target.value)}
           />
-
-          {/* Submit Button */}
           <button
             onClick={handleSubmitReview}
             className="mt-4 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
@@ -169,12 +166,14 @@ const BookDetails = () => {
           </button>
         </div>
       </section>
+
       {book.authorBio && (
         <>
           <h3 className="text-xl font-semibold mt-6">About the Author</h3>
           <p>{book.authorBio}</p>
         </>
       )}
+
     </div>
   );
 };
