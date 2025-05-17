@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const sellingSteps = [
   {
@@ -28,10 +29,19 @@ const sellingSteps = [
   },
 ];
 
+
+const SellProcessSection = () => {
+  const navigate = useNavigate();
+  return (
+    <section className="bg-white py-16 px-6 md:px-20 mt-10">
+      <h2 className="text-3xl font-bold text-gray-800 text-center mb-12">
+        How to Sell Your Books
+      </h2>
 const ProcessSection = () => {
   return (
     <section className="py-16 px-6 md:px-20 mt-10">
       <h2 className="text-3xl font-bold text-center mb-12">How to Sell Your Books</h2>
+
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
         {sellingSteps.map((step, index) => (
@@ -48,7 +58,10 @@ const ProcessSection = () => {
       </div>
 
       <div className="flex justify-center mt-10">
-        <button className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+        <button
+          className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+          onClick={() => navigate("/sell")}
+        >
           Start Selling
         </button>
       </div>

@@ -9,13 +9,19 @@ const BookDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [book, setBook] = useState(null);
-  const [reviews, setReviews] = useState([]);
+
+  const [reviews, setReviews] = useState(book.reviews);
+
+  
+
   const [newReview, setNewReview] = useState("");
   const [newRating, setNewRating] = useState(0);
 
   useEffect(() => {
     axios
+
       .get(`http://localhost:8080/api/books/${id}`)
+
       .then((res) => {
         setBook(res.data);
         setReviews(res.data.reviews || []);
@@ -24,6 +30,12 @@ const BookDetails = () => {
         console.error("Failed to load book:", err);
       });
   }, [id]);
+
+
+  if (!book)
+    return <div className="p-10 text-center">Loading book details...</div>;
+
+
 
   const handleSubmitReview = () => {
     if (newReview.trim() && newRating > 0) {
@@ -154,6 +166,14 @@ const BookDetails = () => {
           </button>
         </div>
       </section>
+
+      {book.authorBio && (
+        <>
+          <h3 className="text-xl font-semibold mt-6">About the Author</h3>
+          <p>{book.authorBio}</p>
+        </>
+      )}
+
     </div>
   );
 };
