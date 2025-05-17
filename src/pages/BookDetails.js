@@ -3,39 +3,40 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import BookCarousel from "../components/BookCarousel";
-//test
 
 const BookDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [book, setBook] = useState(null);
-
-  const [reviews, setReviews] = useState(book.reviews);
-
-  
-
+  const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState("");
   const [newRating, setNewRating] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
-
-      .get(`http://localhost:8080/api/books/${id}`)
-
-      .then((res) => {
+    const fetchBook = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8080/api/books/${id}`);
         setBook(res.data);
         setReviews(res.data.reviews || []);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Failed to load book:", err);
-      });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBook();
   }, [id]);
 
-
-  if (!book)
+  if (loading) {
     return <div className="p-10 text-center">Loading book details...</div>;
+  }
 
-
+  if (!book) {
+    return <div className="p-10 text-center text-red-600">Book not found.</div>;
+  }
 
   const handleSubmitReview = () => {
     if (newReview.trim() && newRating > 0) {
@@ -61,10 +62,6 @@ const BookDetails = () => {
       setNewRating(0);
     }
   };
-
-  if (!book) {
-    return <div className="p-10 text-center">Loading book details...</div>;
-  }
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -98,7 +95,7 @@ const BookDetails = () => {
         </div>
       </section>
 
-      {/* Book Specifications */}
+      {/* Specifications */}
       <section className="py-10 px-6 bg-white shadow-md mb-10">
         <h2 className="text-2xl font-bold mb-4">Specifications</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -123,7 +120,7 @@ const BookDetails = () => {
         )}
       </section>
 
-      {/* Customer Reviews */}
+      {/* Reviews */}
       <section className="py-10 px-6 bg-white shadow-md mb-10">
         <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
         <p className="text-sm">Average Rating: {book.averageRating} / 5</p>
@@ -166,14 +163,6 @@ const BookDetails = () => {
           </button>
         </div>
       </section>
-
-      {book.authorBio && (
-        <>
-          <h3 className="text-xl font-semibold mt-6">About the Author</h3>
-          <p>{book.authorBio}</p>
-        </>
-      )}
-
     </div>
   );
 };

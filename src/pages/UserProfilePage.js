@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
-const UserProfilePage = () => {
+const  UserProfilePage = () => {
   const user = useSelector((state) => state.user.user);
   const token = useSelector((state) => state.user.token);
 
@@ -21,52 +21,64 @@ const UserProfilePage = () => {
   });
 
   useEffect(() => {
-    if (token) {
-      axios
-        .get("http://localhost:8080/api/addresses", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((res) => setAddresses(res.data))
-        .catch((err) => console.error("Failed to load addresses", err));
+    const fetchData = async () => {
+      if (!token) return;
 
-      axios
-        .get("http://localhost:8080/api/orders", {
+      try {
+        console.log("got addresss");
+        const addressRes = await axios.get("http://localhost:8080/api/addresses", {
           headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((res) => setOrders(res.data))
-        .catch((err) => console.error("Failed to load orders", err));
-    }
+          
+        });
+        setAddresses(addressRes.data);
+      } catch (err) {
+        console.error("Failed to load addresses", err);
+      }
+
+      try {
+        const ordersRes = await axios.get("http://localhost:8080/api/orders", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setOrders(ordersRes.data);
+      } catch (err) {
+        console.error("Failed to load orders", err);
+      }
+    };
+
+    fetchData();
   }, [token]);
 
-  const handleAddAddress = (e) => {
+  const handleAddAddress = async (e) => {
     e.preventDefault();
-    axios
-      .post("http://localhost:8080/api/addresses", newAddress, {
+    try {
+      const res = await axios.post("http://localhost:8080/api/addresses", newAddress, {
         headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        setAddresses([...addresses, res.data]);
-        setNewAddress({
-          name: "",
-          street: "",
-          city: "",
-          state: "",
-          postalCode: "",
-          country: "India",
-          phone: "",
-          isDefault: false,
-        });
-      })
-      .catch((err) => console.error("Failed to add address", err));
+      });
+      setAddresses([...addresses, res.data]);
+      setNewAddress({
+        name: "",
+        street: "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "India",
+        phone: "",
+        isDefault: false,
+      });
+    } catch (err) {
+      console.error("Failed to add address", err);
+    }
   };
 
-  const handleDelete = (id) => {
-    axios
-      .delete(`http://localhost:8080/api/addresses/${id}`, {
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/addresses/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
-      })
-      .then(() => setAddresses(addresses.filter((addr) => addr.id !== id)))
-      .catch((err) => console.error("Failed to delete address", err));
+      });
+      setAddresses(addresses.filter((addr) => addr.id !== id));
+    } catch (err) {
+      console.error("Failed to delete address", err);
+    }
   };
 
   return (
