@@ -37,7 +37,7 @@ const Checkout = () => {
 
   const clearCartFromBackend = async () => {
     try {
-      await fetch(`/api/cart/${user.id}`, {
+      await fetch(`http://localhost:8080/api/cart/clear`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
