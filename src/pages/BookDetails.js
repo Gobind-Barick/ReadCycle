@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import BookCarousel from "../components/BookCarousel";
-import { addToCart } from "../redux/cartSlice";
+import { addCartItemToBackend } from "../redux/cartSlice";
 
 const BookDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const token = useSelector((state) => state.user.token); // get JWT token
   const [book, setBook] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState("");
@@ -34,8 +35,23 @@ const BookDetails = () => {
   }, [id]);
 
   const handleAddToCart = () => {
+    if (!token) {
+      alert("Please log in to add items to your cart.");
+      return;
+    }
+
     if (book) {
-      dispatch(addToCart({ ...book, quantity: 1 }));
+      const item = {
+        bookId: book.id,
+        title: book.title,
+        author: book.author,
+        price: book.price,
+        image: book.imageUrl,
+        condition: book.condition,
+        quantity: 1
+      };
+
+      dispatch(addCartItemToBackend({ item, token }));
       navigate("/cart");
     }
   };

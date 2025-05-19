@@ -16,17 +16,21 @@ import ContactUs from "./pages/ContactUs";
 import SearchResultsPage from "./pages/SearchResultsPage";
 import OAuth2RedirectHandler from "./pages/OAuth2RedirectHandler";
 import Navbar from "./components/Navbar";
+import UserProfilePage from "./pages/UserProfilePage";
 import { useDispatch } from "react-redux";
 import { setUser } from "./redux/userSlice";
-import UserProfilePage from "./pages/UserProfilePage";
+import { fetchCartItems } from "./redux/cartSlice"; // ✅ Import
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+    const storedToken = localStorage.getItem("jwt");
+
+    if (storedUser && storedToken) {
       dispatch(setUser(JSON.parse(storedUser)));
+      dispatch(fetchCartItems(storedToken)); // ✅ Fetch cart on app load
     }
   }, [dispatch]);
 

@@ -1,11 +1,12 @@
+// Cart.js
 import React from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
   incrementQuantity,
   decrementQuantity,
-  removeFromCart,
-} from "../redux/cartSlice"; // Adjust path if needed
+  removeCartItemFromBackend,
+} from "../redux/cartSlice";
 
 // Safe selector for cart items
 const selectCartItems = (state) => state.cart?.items || [];
@@ -31,7 +32,13 @@ const Cart = () => {
   };
 
   const handleRemove = (id) => {
-    dispatch(removeFromCart(id));
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+      console.warn("User not authenticated.");
+      return;
+    }
+
+    dispatch(removeCartItemFromBackend({ id, token })); // ✅ Corrected
   };
 
   return (

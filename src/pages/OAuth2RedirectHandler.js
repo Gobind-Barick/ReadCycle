@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/userSlice";
+import { fetchCartItems } from "../redux/cartSlice"; // ✅ Import
 
 const OAuth2RedirectHandler = () => {
   const navigate = useNavigate();
@@ -17,12 +18,15 @@ const OAuth2RedirectHandler = () => {
       try {
         const user = JSON.parse(decodeURIComponent(userString));
 
-        // Save to localStorage
+        // ✅ Save token and user to localStorage
         localStorage.setItem("jwt", token);
         localStorage.setItem("user", JSON.stringify(user));
 
-        // Update Redux state
+        // ✅ Update Redux state
         dispatch(setUser(user));
+
+        // ✅ Fetch cart items
+        dispatch(fetchCartItems(token));
 
         // Redirect to homepage
         navigate("/");
