@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loadRazorpayScript } from "../utils/razorpay";
-
-import { fetchAddresses } from "../redux/addressSlice"; // Your thunk
+import { fetchAddresses } from "../redux/addressSlice";
 import { clearCart } from "../redux/cartSlice";
 
 const Checkout = () => {
@@ -24,21 +23,18 @@ const Checkout = () => {
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("razorpay");
 
-  // Fetch addresses on mount if user.token is present
   useEffect(() => {
     if (user.token) {
       dispatch(fetchAddresses(user.token));
     }
   }, [dispatch, user.token]);
 
-  // When addresses load, select first one by default
   useEffect(() => {
     if (addresses.length > 0) {
       setSelectedAddressId(addresses[0].id || addresses[0]._id);
     }
   }, [addresses]);
 
-  // Clear cart function: calls backend and redux
   const clearCartFromBackend = async () => {
     try {
       await fetch(`/api/cart/${user.id}`, {
@@ -54,9 +50,7 @@ const Checkout = () => {
     }
   };
 
-  const isAddressSelected = () => {
-    return selectedAddressId !== null;
-  };
+  const isAddressSelected = () => selectedAddressId !== null;
 
   const handlePlaceOrder = async () => {
     if (cartItems.length === 0) {
@@ -76,7 +70,6 @@ const Checkout = () => {
       return;
     }
 
-    // Razorpay payment flow
     const isLoaded = await loadRazorpayScript();
     if (!isLoaded) {
       alert("Razorpay SDK failed to load.");
@@ -84,7 +77,6 @@ const Checkout = () => {
     }
 
     const amountInPaise = total * 100;
-
     const selectedAddress = addresses.find(
       (addr) => (addr.id || addr._id) === selectedAddressId
     );
@@ -100,9 +92,39 @@ const Checkout = () => {
         alert("✅ Payment Successful!");
         console.log("Razorpay Response:", response);
 
-        await clearCartFromBackend();
+        try {
+          const orderPayload = {
+            totalAmount: total,
+            status: "COMPLETED",
+            orderDate: new Date().toISOString(),
+            items: cartItems.map((item) => ({
+              bookId: item.id,
+              title: item.title,
+              author: item.author,
+              price: item.price,
+              quantity: item.quantity,
+            })),
+          };
 
-        navigate("/");
+          const res = await fetch("http://localhost:8080/api/orders", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${user.token}`,
+            },
+            body: JSON.stringify(orderPayload),
+          });
+
+          if (!res.ok) {
+            throw new Error("Failed to save order to database");
+          }
+
+          await clearCartFromBackend();
+          navigate("/");
+        } catch (err) {
+          console.error("❌ Error saving order:", err);
+          alert("⚠️ Payment succeeded but saving order failed.");
+        }
       },
       prefill: {
         name: selectedAddress?.name || "",
@@ -132,7 +154,6 @@ const Checkout = () => {
     <div className="container mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Saved Addresses */}
         <div className="bg-white p-6 shadow rounded">
           <h2 className="text-xl font-semibold mb-4">Select Billing Address</h2>
           {addressesLoading ? (
@@ -159,8 +180,7 @@ const Checkout = () => {
                       className="mr-3"
                     />
                     <span>
-                      <strong>{addr.name}</strong>
-                      ,{addr.city}, {addr.state}, {" "}
+                      <strong>{addr.name}</strong>, {addr.city}, {addr.state},{" "}
                       {addr.pincode || addr.pinCode || addr.postalCode || "N/A"} <br />
                       Phone: {addr.phone}
                     </span>
@@ -171,10 +191,8 @@ const Checkout = () => {
           )}
         </div>
 
-        {/* Order Summary + Payment */}
         <div className="bg-white p-6 shadow rounded">
           <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-
           {cartItems.length === 0 ? (
             <p>Your cart is empty.</p>
           ) : (
