@@ -47,7 +47,7 @@ const SearchResultsPage = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <Navbar />
+      
       <div className="max-w-7xl mx-auto px-6 py-10">
         <h1 className="text-3xl font-bold mb-6 text-center">
           Search Results for: <span className="text-blue-600">"{query}"</span>

@@ -91,7 +91,7 @@ const BookDetails = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <Navbar />
+    
 
       {/* Hero Section */}
       <section className="flex flex-col md:flex-row justify-between py-10 px-6">

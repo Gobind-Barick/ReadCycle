@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 const AboutUs = () => {
   return (
     <>
-      <Navbar />
+      
       <div className="bg-gray-50 min-h-screen">
         <div class="bg-grey text-black min-h-screen p-10 space-y-12 font-sans max-w-4xl mx-auto">
           <section>

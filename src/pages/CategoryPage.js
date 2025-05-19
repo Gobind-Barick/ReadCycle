@@ -56,7 +56,7 @@ const CategoryPage = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <Navbar />
+      
       <div className="min-h-screen bg-gray-50 py-10">
         <div className="max-w-7xl mx-auto px-6 bg-gray-50">
           <h1 className="text-3xl font-bold mb-6 capitalize text-center">

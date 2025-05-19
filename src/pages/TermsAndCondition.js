@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 const TermsAndCondition = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
-      <Navbar />
+      
       <div className="bg-grey text-black min-h-screen p-10 space-y-12 font-sans max-w-4xl mx-auto">
         <section>
           <h2 className="text-3xl font-semibold relative inline-block">

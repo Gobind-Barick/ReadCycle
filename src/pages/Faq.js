@@ -75,7 +75,7 @@ const faqData = [
 const Faq = () => {
   return (
     <>
-      <Navbar />
+      
       <div className="bg-grey text-white min-h-screen p-6 space-y-6 max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold text-black">
           FAQs{" "}
