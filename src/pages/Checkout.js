@@ -1,17 +1,19 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loadRazorpayScript } from "../utils/razorpay";
 
+import { fetchAddresses } from "../redux/addressSlice"; // Your thunk
+import { clearCart } from "../redux/cartSlice";
+
 const Checkout = () => {
   const navigate = useNavigate();
-  const [paymentMethod, setPaymentMethod] = useState("razorpay");
-  const [form, setForm] = useState({
-    name: "",
-    address: "",
-    city: "",
-    pincode: "",
-  });
+  const dispatch = useDispatch();
+
+  const user = useSelector((state) => state.user);
+  const { addresses, loading: addressesLoading, error: addressesError } = useSelector(
+    (state) => state.address
+  );
 
   const cartItems = useSelector((state) => state.cart?.items || []);
   const total = cartItems.reduce(
@@ -19,37 +21,62 @@ const Checkout = () => {
     0
   );
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("razorpay");
+
+  // Fetch addresses on mount if user.token is present
+  useEffect(() => {
+    if (user.token) {
+      dispatch(fetchAddresses(user.token));
+    }
+  }, [dispatch, user.token]);
+
+  // When addresses load, select first one by default
+  useEffect(() => {
+    if (addresses.length > 0) {
+      setSelectedAddressId(addresses[0].id || addresses[0]._id);
+    }
+  }, [addresses]);
+
+  // Clear cart function: calls backend and redux
+  const clearCartFromBackend = async () => {
+    try {
+      await fetch(`/api/cart/${user.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      dispatch(clearCart());
+    } catch (error) {
+      console.error("Failed to clear cart from backend:", error);
+    }
   };
 
-  const isFormValid = () => {
-    return (
-      form.name.trim() &&
-      form.address.trim() &&
-      form.city.trim() &&
-      form.pincode.trim()
-    );
+  const isAddressSelected = () => {
+    return selectedAddressId !== null;
   };
 
   const handlePlaceOrder = async () => {
-    if (!isFormValid()) {
-      alert("❗ Please fill in all billing details.");
-      return;
-    }
-
     if (cartItems.length === 0) {
       alert("🛒 Your cart is empty.");
       return;
     }
 
+    if (!isAddressSelected()) {
+      alert("❗ Please select a billing address.");
+      return;
+    }
+
     if (paymentMethod === "cod") {
       alert("✅ Order placed with Cash on Delivery!");
+      await clearCartFromBackend();
       navigate("/");
       return;
     }
 
+    // Razorpay payment flow
     const isLoaded = await loadRazorpayScript();
     if (!isLoaded) {
       alert("Razorpay SDK failed to load.");
@@ -58,6 +85,10 @@ const Checkout = () => {
 
     const amountInPaise = total * 100;
 
+    const selectedAddress = addresses.find(
+      (addr) => (addr.id || addr._id) === selectedAddressId
+    );
+
     const options = {
       key: "rzp_test_fLdHPGEAL3ijP6",
       amount: amountInPaise,
@@ -65,15 +96,18 @@ const Checkout = () => {
       name: "BookNook",
       description: `Payment for ${cartItems.length} item(s)`,
       image: "https://via.placeholder.com/100x100?text=Logo",
-      handler: function (response) {
+      handler: async function (response) {
         alert("✅ Payment Successful!");
         console.log("Razorpay Response:", response);
+
+        await clearCartFromBackend();
+
         navigate("/");
       },
       prefill: {
-        name: form.name,
-        email: "testuser@example.com",
-        contact: "9999999999",
+        name: selectedAddress?.name || "",
+        email: user.email || "testuser@example.com",
+        contact: selectedAddress?.phone || "9999999999",
       },
       notes: {
         cart_items: JSON.stringify(
@@ -83,6 +117,7 @@ const Checkout = () => {
             quantity: item.quantity,
           }))
         ),
+        address: JSON.stringify(selectedAddress),
       },
       theme: {
         color: "#38a169",
@@ -97,41 +132,43 @@ const Checkout = () => {
     <div className="container mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Billing Details */}
+        {/* Saved Addresses */}
         <div className="bg-white p-6 shadow rounded">
-          <h2 className="text-xl font-semibold mb-4">Billing Details</h2>
-          <input
-            name="name"
-            type="text"
-            placeholder="Full Name"
-            value={form.name}
-            onChange={handleInputChange}
-            className="w-full p-2 border mb-4 rounded"
-          />
-          <input
-            name="address"
-            type="text"
-            placeholder="Address"
-            value={form.address}
-            onChange={handleInputChange}
-            className="w-full p-2 border mb-4 rounded"
-          />
-          <input
-            name="city"
-            type="text"
-            placeholder="City"
-            value={form.city}
-            onChange={handleInputChange}
-            className="w-full p-2 border mb-4 rounded"
-          />
-          <input
-            name="pincode"
-            type="text"
-            placeholder="Pincode"
-            value={form.pincode}
-            onChange={handleInputChange}
-            className="w-full p-2 border mb-4 rounded"
-          />
+          <h2 className="text-xl font-semibold mb-4">Select Billing Address</h2>
+          {addressesLoading ? (
+            <p>Loading addresses...</p>
+          ) : addressesError ? (
+            <p className="text-red-600">Error: {addressesError}</p>
+          ) : addresses.length === 0 ? (
+            <p>No saved addresses found. Please add an address in your profile.</p>
+          ) : (
+            <div className="space-y-4">
+              {addresses.map((addr) => {
+                const addrId = addr.id || addr._id;
+                return (
+                  <label
+                    key={addrId}
+                    className="block border rounded p-4 cursor-pointer hover:bg-gray-50"
+                  >
+                    <input
+                      type="radio"
+                      name="selectedAddress"
+                      value={addrId}
+                      checked={selectedAddressId === addrId}
+                      onChange={() => setSelectedAddressId(addrId)}
+                      className="mr-3"
+                    />
+                    <span>
+                      <strong>{addr.name}</strong>
+                      ,{addr.city}, {addr.state}, {" "}
+                      {addr.pincode || addr.pinCode || addr.postalCode || "N/A"} <br />
+                      Phone: {addr.phone}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Order Summary + Payment */}
