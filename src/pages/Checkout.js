@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loadRazorpayScript } from "../utils/razorpay";
 
@@ -12,13 +13,11 @@ const Checkout = () => {
     pincode: "",
   });
 
-  const mockBook = {
-    id: 1,
-    title: "Atomic Habits",
-    author: "James Clear",
-    price: 450,
-    condition: "Good",
-  };
+  const cartItems = useSelector((state) => state.cart?.items || []);
+  const total = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -40,6 +39,11 @@ const Checkout = () => {
       return;
     }
 
+    if (cartItems.length === 0) {
+      alert("🛒 Your cart is empty.");
+      return;
+    }
+
     if (paymentMethod === "cod") {
       alert("✅ Order placed with Cash on Delivery!");
       navigate("/");
@@ -48,18 +52,18 @@ const Checkout = () => {
 
     const isLoaded = await loadRazorpayScript();
     if (!isLoaded) {
-      alert("Razorpay SDK failed to load. Are you online?");
+      alert("Razorpay SDK failed to load.");
       return;
     }
 
-    const amountInPaise = mockBook.price * 100;
+    const amountInPaise = total * 100;
 
     const options = {
       key: "rzp_test_fLdHPGEAL3ijP6",
       amount: amountInPaise,
       currency: "INR",
       name: "BookNook",
-      description: `Payment for ${mockBook.title}`,
+      description: `Payment for ${cartItems.length} item(s)`,
       image: "https://via.placeholder.com/100x100?text=Logo",
       handler: function (response) {
         alert("✅ Payment Successful!");
@@ -72,8 +76,13 @@ const Checkout = () => {
         contact: "9999999999",
       },
       notes: {
-        book_title: mockBook.title,
-        book_id: mockBook.id,
+        cart_items: JSON.stringify(
+          cartItems.map((item) => ({
+            id: item.id,
+            title: item.title,
+            quantity: item.quantity,
+          }))
+        ),
       },
       theme: {
         color: "#38a169",
@@ -128,10 +137,28 @@ const Checkout = () => {
         {/* Order Summary + Payment */}
         <div className="bg-white p-6 shadow rounded">
           <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-          <div className="mb-4">
-            <p className="font-medium">{mockBook.title}</p>
-            <p>Price: ₹{mockBook.price}</p>
-          </div>
+
+          {cartItems.length === 0 ? (
+            <p>Your cart is empty.</p>
+          ) : (
+            <div className="mb-4 space-y-3">
+              {cartItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex justify-between text-sm border-b pb-2"
+                >
+                  <span>
+                    {item.title} × {item.quantity}
+                  </span>
+                  <span>₹{item.price * item.quantity}</span>
+                </div>
+              ))}
+              <div className="flex justify-between font-semibold pt-3 border-t">
+                <span>Total</span>
+                <span>₹{total}</span>
+              </div>
+            </div>
+          )}
 
           <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
           <div className="mb-6 space-y-2">
