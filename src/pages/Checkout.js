@@ -76,7 +76,6 @@ const Checkout = () => {
       return;
     }
 
-    // Call your backend to create Razorpay order and get order details
     try {
       const orderCreationRes = await fetch("http://localhost:8080/api/orders/create-razorpay-order", {
         method: "POST",
@@ -101,53 +100,22 @@ const Checkout = () => {
       );
 
       const options = {
-        key: "rzp_test_fLdHPGEAL3ijP6", // You can also get this key from backend response if you want
+        key: "rzp_test_fLdHPGEAL3ijP6", // Replace with your real key in prod
         amount: orderData.amount,
         currency: orderData.currency,
         name: "BookNook",
         description: `Payment for ${cartItems.length} item(s)`,
         image: "https://via.placeholder.com/100x100?text=Logo",
-        order_id: orderData.id, // Razorpay order ID from backend
+        order_id: orderData.id,
         handler: async function (response) {
           alert("✅ Payment Successful!");
-          console.log("Razorpay Response:", response);
 
           try {
-            // Save order in your backend database (as before)
-            const orderPayload = {
-              totalAmount: total,
-              status: "COMPLETED",
-              orderDate: new Date().toISOString(),
-              items: cartItems.map((item) => ({
-                bookId: item.id,
-                title: item.title,
-                author: item.author,
-                price: item.price,
-                quantity: item.quantity,
-              })),
-              paymentId: response.razorpay_payment_id,
-              orderId: response.razorpay_order_id,
-              signature: response.razorpay_signature,
-            };
-
-            const res = await fetch("http://localhost:8080/api/orders", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${user.token}`,
-              },
-              body: JSON.stringify(orderPayload),
-            });
-
-            if (!res.ok) {
-              throw new Error("Failed to save order to database");
-            }
-
             await clearCartFromBackend();
             navigate("/");
           } catch (err) {
-            console.error("❌ Error saving order:", err);
-            alert("⚠️ Payment succeeded but saving order failed.");
+            console.error("❌ Error after payment success:", err);
+            alert("⚠️ Payment succeeded but something went wrong after.");
           }
         },
         prefill: {
