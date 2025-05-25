@@ -76,78 +76,106 @@ const Checkout = () => {
       return;
     }
 
-    const amountInPaise = total * 100;
-    const selectedAddress = addresses.find(
-      (addr) => (addr.id || addr._id) === selectedAddressId
-    );
+    // Call your backend to create Razorpay order and get order details
+    try {
+      const orderCreationRes = await fetch("http://localhost:8080/api/orders/create-razorpay-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({
+          amount: total * 100, // amount in paise
+          currency: "INR",
+        }),
+      });
 
-    const options = {
-      key: "rzp_test_fLdHPGEAL3ijP6",
-      amount: amountInPaise,
-      currency: "INR",
-      name: "BookNook",
-      description: `Payment for ${cartItems.length} item(s)`,
-      image: "https://via.placeholder.com/100x100?text=Logo",
-      handler: async function (response) {
-        alert("✅ Payment Successful!");
-        console.log("Razorpay Response:", response);
+      if (!orderCreationRes.ok) {
+        throw new Error("Failed to create Razorpay order on backend");
+      }
 
-        try {
-          const orderPayload = {
-            totalAmount: total,
-            status: "COMPLETED",
-            orderDate: new Date().toISOString(),
-            items: cartItems.map((item) => ({
-              bookId: item.id,
-              title: item.title,
-              author: item.author,
-              price: item.price,
-              quantity: item.quantity,
-            })),
-          };
+      const orderData = await orderCreationRes.json();
 
-          const res = await fetch("http://localhost:8080/api/orders", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${user.token}`,
-            },
-            body: JSON.stringify(orderPayload),
-          });
+      const selectedAddress = addresses.find(
+        (addr) => (addr.id || addr._id) === selectedAddressId
+      );
 
-          if (!res.ok) {
-            throw new Error("Failed to save order to database");
+      const options = {
+        key: "rzp_test_fLdHPGEAL3ijP6", // You can also get this key from backend response if you want
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "BookNook",
+        description: `Payment for ${cartItems.length} item(s)`,
+        image: "https://via.placeholder.com/100x100?text=Logo",
+        order_id: orderData.id, // Razorpay order ID from backend
+        handler: async function (response) {
+          alert("✅ Payment Successful!");
+          console.log("Razorpay Response:", response);
+
+          try {
+            // Save order in your backend database (as before)
+            const orderPayload = {
+              totalAmount: total,
+              status: "COMPLETED",
+              orderDate: new Date().toISOString(),
+              items: cartItems.map((item) => ({
+                bookId: item.id,
+                title: item.title,
+                author: item.author,
+                price: item.price,
+                quantity: item.quantity,
+              })),
+              paymentId: response.razorpay_payment_id,
+              orderId: response.razorpay_order_id,
+              signature: response.razorpay_signature,
+            };
+
+            const res = await fetch("http://localhost:8080/api/orders", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${user.token}`,
+              },
+              body: JSON.stringify(orderPayload),
+            });
+
+            if (!res.ok) {
+              throw new Error("Failed to save order to database");
+            }
+
+            await clearCartFromBackend();
+            navigate("/");
+          } catch (err) {
+            console.error("❌ Error saving order:", err);
+            alert("⚠️ Payment succeeded but saving order failed.");
           }
+        },
+        prefill: {
+          name: selectedAddress?.name || "",
+          email: user.email || "testuser@example.com",
+          contact: selectedAddress?.phone || "9999999999",
+        },
+        notes: {
+          cart_items: JSON.stringify(
+            cartItems.map((item) => ({
+              id: item.id,
+              title: item.title,
+              quantity: item.quantity,
+            }))
+          ),
+          address: JSON.stringify(selectedAddress),
+        },
+        theme: {
+          color: "#38a169",
+        },
+      };
 
-          await clearCartFromBackend();
-          navigate("/");
-        } catch (err) {
-          console.error("❌ Error saving order:", err);
-          alert("⚠️ Payment succeeded but saving order failed.");
-        }
-      },
-      prefill: {
-        name: selectedAddress?.name || "",
-        email: user.email || "testuser@example.com",
-        contact: selectedAddress?.phone || "9999999999",
-      },
-      notes: {
-        cart_items: JSON.stringify(
-          cartItems.map((item) => ({
-            id: item.id,
-            title: item.title,
-            quantity: item.quantity,
-          }))
-        ),
-        address: JSON.stringify(selectedAddress),
-      },
-      theme: {
-        color: "#38a169",
-      },
-    };
-
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error("Razorpay order creation error:", error);
+      alert("⚠️ Unable to initiate payment. Please try again.");
+    }
   };
 
   return (
