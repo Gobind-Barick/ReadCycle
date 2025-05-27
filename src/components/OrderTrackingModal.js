@@ -1,57 +1,64 @@
-import React, { useEffect, useState } from "react";
-import { Dialog } from "@headlessui/react";
-import axios from "axios";
+import React from 'react';
+import { format } from 'date-fns';
 
-const OrderTrackingModal = ({ isOpen, onClose, razorpayOrderId }) => {
-  const [trackingData, setTrackingData] = useState(null);
-  const [loading, setLoading] = useState(false);
+const OrderTrackingModal = ({ trackingData, onClose }) => {
+  const shipment = trackingData?.ShipmentData?.[0]?.Shipment;
 
-  useEffect(() => {
-    if (isOpen && razorpayOrderId) {
-      setLoading(true);
-      axios
-        .get(`/api/orders/track?orderId=${razorpayOrderId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        })
-        .then((res) => {
-          setTrackingData(res.data);
-        })
-        .catch((err) => {
-          setTrackingData({ error: "Failed to fetch tracking info." });
-        })
-        .finally(() => setLoading(false));
-    }
-  }, [isOpen, razorpayOrderId]);
+  if (!shipment) return null;
+
+  const {
+    Status,
+    AWB,
+    InvoiceAmount,
+    DeliveryDate,
+    ExpectedDeliveryDate,
+    ReferenceNo,
+    Consignee,
+    Scans
+  } = shipment;
 
   return (
-    <Dialog open={isOpen} onClose={onClose} className="fixed z-50 inset-0 p-4">
-      <Dialog.Panel className="mx-auto max-w-md bg-white p-6 rounded-xl shadow-lg">
-        <Dialog.Title className="text-xl font-semibold mb-4">Track Order</Dialog.Title>
-        {loading ? (
-          <p>Loading...</p>
-        ) : trackingData?.error ? (
-          <p className="text-red-500">{trackingData.error}</p>
-        ) : trackingData ? (
-          <div className="space-y-2 text-sm">
-            <p><strong>Status:</strong> {trackingData.status}</p>
-            <p><strong>AWB:</strong> {trackingData.awb}</p>
-            <p><strong>Courier:</strong> {trackingData.courier}</p>
-            <p><strong>Last Update:</strong> {trackingData.last_update}</p>
-            <p><strong>Remarks:</strong> {trackingData.remark}</p>
-            <p><strong>Tracking URL:</strong> <a href={trackingData.tracking_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Track Online</a></p>
-          </div>
-        ) : (
-          <p>No tracking data found.</p>
-        )}
-        <div className="mt-4">
-          <button onClick={onClose} className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800">
-            Close
-          </button>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-[90%] max-w-3xl max-h-[90vh] overflow-y-auto shadow-lg">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Tracking Details - Order #{ReferenceNo}</h2>
+          <button className="text-red-500 font-bold" onClick={onClose}>✕</button>
         </div>
-      </Dialog.Panel>
-    </Dialog>
+
+        <div className="mb-4">
+          <p><strong>Status:</strong> {Status?.Status}</p>
+          <p><strong>Location:</strong> {Status?.StatusLocation}</p>
+          <p><strong>Date:</strong> {format(new Date(Status?.StatusDateTime), 'PPpp')}</p>
+          <p><strong>Instructions:</strong> {Status?.Instructions}</p>
+        </div>
+
+        <hr className="my-4" />
+
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div><strong>AWB:</strong> {AWB}</div>
+          <div><strong>Invoice Amount:</strong> ₹{InvoiceAmount}</div>
+          <div><strong>Delivery Date:</strong> {format(new Date(DeliveryDate), 'PPpp')}</div>
+          <div><strong>Expected Delivery:</strong> {format(new Date(ExpectedDeliveryDate), 'PPpp')}</div>
+          <div><strong>Consignee:</strong> {Consignee?.Name} ({Consignee?.City} - {Consignee?.PinCode})</div>
+        </div>
+
+        <hr className="my-4" />
+
+        <h3 className="text-lg font-semibold mb-2">Tracking Timeline</h3>
+        <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
+          {Scans?.map((scanObj, index) => {
+            const scan = scanObj?.ScanDetail;
+            return (
+              <div key={index} className="border-l-4 border-blue-500 pl-4">
+                <p className="text-sm text-gray-700 font-medium">{scan.Scan}</p>
+                <p className="text-sm">{scan.Instructions}</p>
+                <p className="text-xs text-gray-500">{format(new Date(scan.ScanDateTime), 'PPpp')} — {scan.ScannedLocation}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,68 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-
-const OrderTrackingModal = ({ trackingId, onClose }) => {
-  const token = useSelector((state) => state.user.token);
-  const [trackingData, setTrackingData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchTracking = async () => {
-      try {
-        const res = await axios.get(`http://localhost:8080/api/orders/track/${trackingId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setTrackingData(res.data);
-      } catch (err) {
-        console.error("Error fetching tracking details", err);
-        setTrackingData(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTracking();
-  }, [trackingId, token]);
-
-  return (
-    <div style={{
-      position: "fixed", top: 0, left: 0, width: "100%", height: "100%",
-      backgroundColor: "rgba(0, 0, 0, 0.5)", display: "flex",
-      alignItems: "center", justifyContent: "center", zIndex: 9999
-    }}>
-      <div style={{
-        backgroundColor: "white", padding: "2rem", borderRadius: "8px",
-        maxWidth: "500px", width: "90%", boxShadow: "0 2px 10px rgba(0,0,0,0.3)"
-      }}>
-        <h2>Tracking Details</h2>
-        {loading ? (
-          <p>Loading tracking info...</p>
-        ) : trackingData ? (
-          <div>
-            <p><strong>Tracking ID:</strong> {trackingData.trackingId}</p>
-            <p><strong>Status:</strong> {trackingData.status}</p>
-            <p><strong>Last Updated:</strong> {trackingData.lastUpdated}</p>
-            {trackingData.history?.map((event, index) => (
-              <div key={index} style={{ marginBottom: "1rem" }}>
-                <p><strong>{event.status}</strong> - {event.location}</p>
-                <p style={{ fontSize: "0.85rem", color: "#555" }}>{event.timestamp}</p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>No tracking info available.</p>
-        )}
-        <button
-          onClick={onClose}
-          style={{ marginTop: "1rem", backgroundColor: "#dc2626", color: "white", padding: "0.5rem 1rem", border: "none", borderRadius: "5px" }}
-        >
-          Close
-        </button>
-      </div>
-    </div>
-  );
-};
+import OrderTrackingModal from "../components/OrderTrackingModal";
 
 const UserProfilePage = () => {
   const user = useSelector((state) => state.user.user);
@@ -77,6 +16,7 @@ const UserProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [deletingAddressId, setDeletingAddressId] = useState(null);
   const [trackingId, setTrackingId] = useState(null);
+  const [trackingData, setTrackingData] = useState(null);
 
   const retryTimeoutRef = useRef(null);
 
@@ -112,6 +52,25 @@ const UserProfilePage = () => {
       }
     };
   }, [token, user]);
+
+  useEffect(() => {
+    const fetchTrackingData = async () => {
+      if (!trackingId) return;
+
+      try {
+        const res = await axios.get(`http://localhost:8080/api/orders/track/${trackingId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setTrackingData(res.data);
+      } catch (error) {
+        console.error("Failed to fetch tracking data", error);
+        alert("Failed to load tracking data.");
+        setTrackingId(null);
+      }
+    };
+
+    fetchTrackingData();
+  }, [trackingId, token]);
 
   const handleAddAddress = async (e) => {
     e.preventDefault();
@@ -231,10 +190,16 @@ const UserProfilePage = () => {
               </ul>
               <p><strong>Total:</strong> ₹{order.totalAmount}</p>
               {order.awb && (
-                <button onClick={() => setTrackingId(order.awb)} style={{
-                  marginTop: "0.8rem", backgroundColor: "#22c55e", color: "white",
-                  border: "none", padding: "0.5rem 1rem", borderRadius: "5px"
-                }}>
+                <button
+                  onClick={() => {
+                    setTrackingId(order.awb);
+                    setTrackingData(null); // Reset before new fetch
+                  }}
+                  style={{
+                    marginTop: "0.8rem", backgroundColor: "#22c55e", color: "white",
+                    border: "none", padding: "0.5rem 1rem", borderRadius: "5px"
+                  }}
+                >
                   Track
                 </button>
               )}
@@ -243,7 +208,16 @@ const UserProfilePage = () => {
         </div>
       )}
 
-      {trackingId && <OrderTrackingModal trackingId={trackingId} onClose={() => setTrackingId(null)} />}
+      {/* Modal */}
+      {trackingId && trackingData && (
+        <OrderTrackingModal
+          trackingData={trackingData}
+          onClose={() => {
+            setTrackingId(null);
+            setTrackingData(null);
+          }}
+        />
+      )}
     </div>
   );
 };
