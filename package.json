@@ -19,6 +19,7 @@
     "axios": "^1.9.0",
     "date-fns": "^4.1.0",
     "framer-motion": "^5.6.0",
+    "pdf-lib": "^1.17.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.56.3",

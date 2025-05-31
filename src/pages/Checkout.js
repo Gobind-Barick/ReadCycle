@@ -15,10 +15,7 @@ const Checkout = () => {
   );
 
   const cartItems = useSelector((state) => state.cart?.items || []);
-  const total = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
+  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("razorpay");
@@ -84,7 +81,7 @@ const Checkout = () => {
           Authorization: `Bearer ${user.token}`,
         },
         body: JSON.stringify({
-          amount: total * 100, // amount in paise
+          amount: total * 100,
           currency: "INR",
         }),
       });
@@ -94,30 +91,54 @@ const Checkout = () => {
       }
 
       const orderData = await orderCreationRes.json();
+      const awb = orderData.awb;
 
       const selectedAddress = addresses.find(
         (addr) => (addr.id || addr._id) === selectedAddressId
       );
 
       const options = {
-        key: "rzp_test_fLdHPGEAL3ijP6", // Replace with your real key in prod
+        key: "rzp_test_fLdHPGEAL3ijP6",
         amount: orderData.amount,
         currency: orderData.currency,
         name: "BookNook",
         description: `Payment for ${cartItems.length} item(s)`,
         image: "https://via.placeholder.com/100x100?text=Logo",
         order_id: orderData.id,
-        handler: async function (response) {
-          alert("✅ Payment Successful!");
-
-          try {
-            await clearCartFromBackend();
-            navigate("/");
-          } catch (err) {
-            console.error("❌ Error after payment success:", err);
-            alert("⚠️ Payment succeeded but something went wrong after.");
-          }
+       handler: async function (response) {
+  alert("✅ Payment Successful!");
+  try {
+    // 🔽 Call your backend endpoint to download the label
+    const labelRes = await fetch(
+      `http://localhost:8080/api/orders/download-label/${awb}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
         },
+      }
+    );
+
+    if (!labelRes.ok) {
+      throw new Error("Failed to download shipping label from backend");
+    }
+
+    const blob = await labelRes.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `shipping-label-${awb}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    await clearCartFromBackend();
+    navigate("/");
+  } catch (err) {
+    console.error("❌ Error after payment success:", err);
+    alert("⚠️ Payment succeeded but downloading label failed.");
+  }
+},
         prefill: {
           name: selectedAddress?.name || "",
           email: user.email || "testuser@example.com",
