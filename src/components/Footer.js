@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Company Info */}
         <div>
-          <h3 className="text-xl font-semibold mb-4">BookNook</h3>
+          <h3 className="text-xl font-semibold mb-4">Readcycle</h3>
           <p className="text-sm">
             Your trusted marketplace for buying and selling pre-loved books.
             Discover, trade, and enjoy reading like never before.

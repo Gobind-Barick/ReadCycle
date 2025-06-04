@@ -51,7 +51,7 @@ const Navbar = () => {
     <>
       <nav className="shadow-md px-4 md:px-10 py-4 flex items-center justify-between">
         <Link to="/" className="text-2xl font-bold">
-          BookNook
+          Readcycle
         </Link>
 
         <div className="flex items-center gap-6 text-gray-700 font-medium text-sm md:text-base">
