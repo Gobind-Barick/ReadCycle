@@ -11,27 +11,32 @@ const BookDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const token = useSelector((state) => state.user.token); // get JWT token
+  const token = useSelector((state) => state.user.token);
+  const user = useSelector((state) => state.user.user); // name, id, etc.
+
   const [book, setBook] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState("");
   const [newRating, setNewRating] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // Fetch book and reviews
   useEffect(() => {
-    const fetchBook = async () => {
+    const fetchBookAndReviews = async () => {
       try {
         const res = await axios.get(`http://localhost:8080/api/books/${id}`);
         setBook(res.data);
-        setReviews(res.data.reviews || []);
+
+        const reviewRes = await axios.get(`http://localhost:8080/api/books/reviews/${id}`);
+        setReviews(reviewRes.data);
       } catch (err) {
-        console.error("Failed to load book:", err);
+        console.error("Failed to load book or reviews:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBook();
+    fetchBookAndReviews();
   }, [id]);
 
   const handleAddToCart = () => {
@@ -48,7 +53,7 @@ const BookDetails = () => {
         price: book.price,
         image: book.imageUrl,
         condition: book.condition,
-        quantity: 1
+        quantity: 1,
       };
 
       dispatch(addCartItemToBackend({ item, token }));
@@ -56,28 +61,39 @@ const BookDetails = () => {
     }
   };
 
-  const handleSubmitReview = () => {
-    if (newReview.trim() && newRating > 0) {
-      const updatedReviews = [...reviews];
-      const existingIndex = updatedReviews.findIndex(
-        (r) => r.username === "You"
-      );
+  const handleSubmitReview = async () => {
+    if (!token || !user) {
+      alert("Please log in to submit a review.");
+      return;
+    }
 
-      const newEntry = {
-        username: "You",
-        rating: newRating,
+    if (newReview.trim() === "" || newRating === 0) {
+      alert("Please provide a comment and a rating.");
+      return;
+    }
+
+    try {
+      const reviewPayload = {
         comment: newReview,
+        rating: newRating,
       };
 
-      if (existingIndex >= 0) {
-        updatedReviews[existingIndex] = newEntry;
-      } else {
-        updatedReviews.push(newEntry);
-      }
+      await axios.post(
+        `http://localhost:8080/api/books/reviews/${id}?userId=${user.id}`,
+        reviewPayload
+      );
 
-      setReviews(updatedReviews);
+      // Refresh reviews and book (for updated average rating)
+      const reviewRes = await axios.get(`http://localhost:8080/api/books/reviews/${id}`);
+      setReviews(reviewRes.data);
+
+      const bookRes = await axios.get(`http://localhost:8080/api/books/${id}`);
+      setBook(bookRes.data);
+
       setNewReview("");
       setNewRating(0);
+    } catch (err) {
+      console.error("Failed to submit review:", err);
     }
   };
 
@@ -91,7 +107,6 @@ const BookDetails = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-    
 
       {/* Hero Section */}
       <section className="flex flex-col md:flex-row justify-between py-10 px-6">
@@ -128,7 +143,7 @@ const BookDetails = () => {
           <div><strong>Publisher:</strong> {book.publisher}</div>
           <div><strong>ISBN:</strong> {book.isbn}</div>
           <div><strong>Language:</strong> {book.language}</div>
-          <div><strong>Genre:</strong> {book.genre}</div>
+          <div><strong>Genre:</strong> {book.genres?.join(", ")}</div>
           <div><strong>Pages:</strong> {book.pages}</div>
           <div><strong>Format:</strong> {book.format}</div>
         </div>
@@ -149,16 +164,28 @@ const BookDetails = () => {
       {/* Reviews */}
       <section className="py-10 px-6 bg-white shadow-md mb-10">
         <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
-        <p className="text-sm">Average Rating: {book.averageRating} / 5</p>
+        <p className="text-sm mb-4">Average Rating: {book.averageRating?.toFixed(1) || "0"} / 5</p>
 
-        {reviews.map((review, index) => (
-          <div key={index} className="mt-4 border-t pt-4">
-            <p className="text-md font-semibold">{review.username}</p>
-            <p className="text-sm">{review.comment}</p>
-            <p className="text-sm text-gray-500">Rating: {review.rating} / 5</p>
-          </div>
-        ))}
+       {reviews.map((review, index) => (
+  <div key={index} className="mt-4 border-t pt-4 flex items-start space-x-4">
+    {/* User Avatar */}
+    <img
+      src={review.user?.avatarUrl || "https://via.placeholder.com/40"}
+      alt={review.user?.name || "User"}
+      className="w-10 h-10 rounded-full object-cover"
+    />
 
+    {/* Review Text */}
+    <div>
+      <p className="text-md font-semibold">{review.user?.name || "Anonymous"}</p>
+      <p className="text-sm">{review.comment}</p>
+      <p className="text-sm text-gray-500">Rating: {review.rating} / 5</p>
+    </div>
+  </div>
+))}
+
+
+        {/* Submit New Review */}
         <div className="mt-6">
           <h3 className="text-xl font-semibold">Write a Review</h3>
           <div className="flex items-center mt-2 space-x-1">
