@@ -50,10 +50,8 @@ const Home = () => {
   const carouselRef = useRef();
 
   useEffect(() => {
-
-
-    axios.get("http://localhost:8080/api/books")
-
+    axios
+      .get("http://localhost:8080/api/books")
       .then((response) => {
         setBooks(response.data);
       })
@@ -84,8 +82,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0f1014] text-gray-900 dark:text-white transition-all duration-300">
 
       {/* Hero/Promotional Carousel */}
       <section className="relative">
@@ -111,13 +108,13 @@ const Home = () => {
         </Slider>
       </section>
 
-      {/* Categories Carousel with Arrows */}
-      <section className="py-12 px-6 sm:px-10 relative bg-gray-50">
+      {/* Categories Carousel */}
+      <section className="py-12 px-6 sm:px-10 relative bg-gray-100 dark:bg-[#1a1a1a]">
         <h2 className="text-2xl font-bold mb-8 text-center">Top Categories</h2>
         <div className="relative flex items-center">
           <button
             onClick={() => scrollCarousel(-1)}
-            className="absolute left-2 z-20 bg-white/80 backdrop-blur shadow-md p-3 rounded-full hover:bg-white transition"
+            className="absolute left-2 z-20 bg-white/80 dark:bg-gray-800 backdrop-blur shadow-md p-3 rounded-full hover:bg-white dark:hover:bg-gray-700 transition"
           >
             <FaChevronLeft />
           </button>
@@ -133,15 +130,10 @@ const Home = () => {
                 <Link
                   to={`/product-category/${slug}`}
                   key={cat.name}
-                  className="min-w-[140px] bg-gray-900 p-5 rounded-xl shadow text-center flex-shrink-0 hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                  className="min-w-[140px] bg-gray-900 dark:bg-gray-800 p-5 rounded-xl shadow text-center flex-shrink-0 hover:shadow-lg transform hover:scale-105 transition-all duration-200"
                 >
                   <div className="text-3xl mb-2">{cat.icon}</div>
-
-                  <p className="text-sm font-medium text-gray-100">
-                    {cat.name}
-                  </p>
-                  <p className="text-sm font-medium text-gray-100">{cat.name}</p>
-
+                  <p className="text-sm font-medium text-white">{cat.name}</p>
                 </Link>
               );
             })}
@@ -149,7 +141,7 @@ const Home = () => {
 
           <button
             onClick={() => scrollCarousel(1)}
-            className="absolute right-2 z-20 bg-white/80 backdrop-blur shadow-md p-3 rounded-full hover:bg-white transition"
+            className="absolute right-2 z-20 bg-white/80 dark:bg-gray-800 backdrop-blur shadow-md p-3 rounded-full hover:bg-white dark:hover:bg-gray-700 transition"
           >
             <FaChevronRight />
           </button>
@@ -158,7 +150,6 @@ const Home = () => {
 
       {/* Book Carousels */}
       <BookCarousel title="📚 Best Sellers" books={books.slice(1, 10)} />
-
       <BookCarousel
         title="🔥 Top Deals"
         books={books.filter((b) => b.price < 400)}
@@ -168,13 +159,10 @@ const Home = () => {
         books={books.filter((b) => b.price <= 300)}
       />
 
-
       {/* Sell Your Books Section */}
-      <section className="py-16 px-6 md:px-20 mt-10 shadow-inner">
+      <section className="py-16 px-6 md:px-20 mt-10 shadow-inner bg-white dark:bg-[#1f1f1f]">
         <SellProcessSection />
       </section>
-
-
 
       <Footer />
     </div>

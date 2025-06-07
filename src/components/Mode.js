@@ -1,60 +1,47 @@
-
-import "../DarkMode.css"
-
-// 1
-const setDark = () => {
-
-  // 2
-  localStorage.setItem("theme", "dark");
-
-  // 3
-  document.documentElement.setAttribute("data-theme", "dark");
-};
-
-const setLight = () => {
-  localStorage.setItem("theme", "light");
-  document.documentElement.setAttribute("data-theme", "light");
-};
-
-// 4
-const storedTheme = localStorage.getItem("theme");
-
-const prefersDark =
-  window.matchMedia &&
-  window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-const defaultDark =
-  storedTheme === "dark" || (storedTheme === null && prefersDark);
-
-if (defaultDark) {
-  setDark();
-}
-
-// 5
-const toggleTheme = (e) => {
-  if (e.target.checked) {
-    setDark();
-  } else {
-    setLight();
-  }
-};
+import React, { useEffect, useState } from "react";
+import "../DarkMode.css"; // optional, only if you're using custom styles
 
 const ModeComponent = () => {
+  const [isDark, setIsDark] = useState(() => {
+    const storedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return storedTheme === "dark" || (storedTheme === null && prefersDark);
+  });
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDark]);
+
+  const toggleTheme = (e) => {
+    setIsDark(e.target.checked);
+  };
+
   return (
-    <div className="toggle-theme-wrapper">
+    <div className="toggle-theme-wrapper flex items-center gap-2">
       <span>☀️</span>
-      <label className="toggle-theme" htmlFor="checkbox">
+      <label className="toggle-theme relative inline-block w-12 h-6">
         <input
           type="checkbox"
           id="checkbox"
-
-          // 6
+          checked={isDark}
           onChange={toggleTheme}
-          defaultChecked={defaultDark}
+          className="opacity-0 w-0 h-0"
         />
-        <div className="slider round"></div>
+        <div className="slider round absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-400 rounded-full transition-all duration-300 before:content-[''] before:absolute before:h-5 before:w-5 before:left-1 before:bottom-0.5 before:bg-white before:rounded-full before:transition-all before:duration-300"
+          style={{
+            transform: isDark ? "translateX(100%)" : "translateX(0)",
+            backgroundColor: isDark ? "#4B5563" : "#E5E7EB",
+          }}
+        />
       </label>
-      <span>🌒</span>
+      <span>🌙</span>
     </div>
   );
 };
