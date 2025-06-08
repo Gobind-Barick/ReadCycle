@@ -33,7 +33,7 @@ const Navbar = () => {
     localStorage.removeItem("user");
     dispatch(logout());
     window.location.reload();
-    window.location.href = "http://localhost:8080/api/logout";
+    window.location.href = "https://readcycle-backend-gyud.onrender.com/api/logout";
   };
 
   useEffect(() => {

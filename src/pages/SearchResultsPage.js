@@ -19,7 +19,7 @@ const SearchResultsPage = () => {
         setError(null);
 
         const response = await fetch(
-          `http://localhost:8080/api/books/search?q=${encodeURIComponent(query)}`
+          `https://readcycle-backend-gyud.onrender.com/api/books/search?q=${encodeURIComponent(query)}`
         );
 
         if (!response.ok) {

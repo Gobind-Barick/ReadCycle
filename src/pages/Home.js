@@ -51,7 +51,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/books")
+      .get("https://readcycle-backend-gyud.onrender.com/api/books")
       .then((response) => {
         setBooks(response.data);
       })

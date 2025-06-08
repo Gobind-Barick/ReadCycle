@@ -24,10 +24,10 @@ const BookDetails = () => {
   useEffect(() => {
     const fetchBookAndReviews = async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/api/books/${id}`);
+        const res = await axios.get(`https://readcycle-backend-gyud.onrender.com/api/books/${id}`);
         setBook(res.data);
 
-        const reviewRes = await axios.get(`http://localhost:8080/api/books/reviews/${id}`);
+        const reviewRes = await axios.get(`https://readcycle-backend-gyud.onrender.com/api/books/reviews/${id}`);
         setReviews(reviewRes.data);
       } catch (err) {
         console.error("Failed to load book or reviews:", err);
@@ -79,15 +79,15 @@ const BookDetails = () => {
       };
 
       await axios.post(
-        `http://localhost:8080/api/books/reviews/${id}?userId=${user.id}`,
+        `https://readcycle-backend-gyud.onrender.com/api/books/reviews/${id}?userId=${user.id}`,
         reviewPayload
       );
 
       // Refresh reviews and book (for updated average rating)
-      const reviewRes = await axios.get(`http://localhost:8080/api/books/reviews/${id}`);
+      const reviewRes = await axios.get(`https://readcycle-backend-gyud.onrender.com/api/books/reviews/${id}`);
       setReviews(reviewRes.data);
 
-      const bookRes = await axios.get(`http://localhost:8080/api/books/${id}`);
+      const bookRes = await axios.get(`https://readcycle-backend-gyud.onrender.com/api/books/${id}`);
       setBook(bookRes.data);
 
       setNewReview("");

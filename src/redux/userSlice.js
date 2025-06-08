@@ -1,8 +1,18 @@
 // src/redux/userSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
+// Safely parse user from localStorage
+let storedUser = null;
+try {
+  const userStr = localStorage.getItem("user");
+  storedUser = userStr ? JSON.parse(userStr) : null;
+} catch (err) {
+  console.error("Error parsing user from localStorage", err);
+  localStorage.removeItem("user"); // Clean up corrupted value
+}
+
 const initialState = {
-  user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
+  user: storedUser,
   token: localStorage.getItem("jwt") || null,
 };
 
@@ -14,7 +24,6 @@ const userSlice = createSlice({
       state.user = action.payload;
       localStorage.setItem("user", JSON.stringify(action.payload));
 
-      // If token already exists and profile page hasn't been reloaded, force reload once
       if (typeof window !== "undefined" && localStorage.getItem("jwt") && !sessionStorage.getItem("profilePageReloaded")) {
         sessionStorage.setItem("profilePageReloaded", "true");
         window.location.reload();
@@ -30,7 +39,6 @@ const userSlice = createSlice({
       localStorage.removeItem("user");
       localStorage.removeItem("jwt");
 
-      // Clear sessionStorage reload flag on logout
       if (typeof window !== "undefined") {
         sessionStorage.removeItem("profilePageReloaded");
       }

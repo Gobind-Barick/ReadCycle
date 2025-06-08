@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8080/api/addresses';
+const BASE_URL = 'https://readcycle-backend-gyud.onrender.com/api/addresses';
 
 export const fetchAddresses = createAsyncThunk(
   'address/fetchAddresses',

@@ -19,7 +19,7 @@ const CategoryPage = () => {
         setLoading(true);
         setError(null);
         const response = await fetch(
-          `http://localhost:8080/api/books?genre=${category.replace(/-/g, ' ')}`
+          `https://readcycle-backend-gyud.onrender.com/api/books?genre=${category.replace(/-/g, ' ')}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch books");

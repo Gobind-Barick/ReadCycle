@@ -18,7 +18,7 @@ const LoginModal = ({ onClose, onSignupClick }) => {
     setIsLoading(true);
 
     // ✅ Send mobile as query param, not in body
-    await axios.post(`http://localhost:8080/api/auth/send-otp?mobile=${mobile}`);
+    await axios.post(`https://readcycle-backend-gyud.onrender.com/api/auth/send-otp?mobile=${mobile}`);
 
     setOtpSent(true);
   } catch (err) {
@@ -40,7 +40,7 @@ const LoginModal = ({ onClose, onSignupClick }) => {
       setIsLoading(true);
       const fullPhone = "91" + mobile;
 
-      const res = await axios.post("http://localhost:8080/api/auth/verify-otp", {
+      const res = await axios.post("https://readcycle-backend-gyud.onrender.com/api/auth/verify-otp", {
         phone: fullPhone,
         otp: otp,
       });
@@ -59,7 +59,7 @@ const LoginModal = ({ onClose, onSignupClick }) => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href = "https://readcycle-backend-gyud.onrender.com/oauth2/authorization/google";
   };
 
   return (
