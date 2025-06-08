@@ -51,7 +51,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get("https://readcycle-backend-production.up.railway.app/api/books")
+      .get("https://readcycle-backend-gyud.onrender.com/api/books")
       .then((response) => {
         setBooks(response.data);
       })

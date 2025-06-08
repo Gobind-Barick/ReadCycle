@@ -18,9 +18,9 @@ export const ProductCardNarrow = ({ product }) => {
       </div>
 
       {/* Pre-Owned Tag */}
-      <div className="absolute top-2 right-0 bg-yellow-600 text-white text-xs px-2 py-0.5 rounded-l z-10">
+      {/* <div className="absolute top-2 right-0 bg-yellow-600 text-white text-xs px-2 py-0.5 rounded-l z-10">
         Pre Owned
-      </div>
+      </div> */}
 
       {/* Image with padding and rounded corners */}
       <div className="p-2 pt-4 pb-1">
