@@ -20,6 +20,7 @@ import UserProfilePage from "./pages/UserProfilePage";
 import { useDispatch } from "react-redux";
 import { setUser } from "./redux/userSlice";
 import { fetchCartItems } from "./redux/cartSlice"; // ✅ Import
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 function App() {
   const dispatch = useDispatch();
@@ -45,6 +46,7 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/product-category/:category" element={<CategoryPage />} />
         <Route path="/about" element={<AboutUs />} />
+        <Route path="/Privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsAndCondition />} />
         <Route path="/sell" element={<Sell />} />
         <Route path="/categories" element={<Categories />} />
