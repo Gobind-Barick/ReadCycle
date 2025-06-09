@@ -40,7 +40,7 @@ const ContactUs = () => {
             <p className="text-gray-800 text-lg">
               📞 Phone:{" "}
               <a href="tel:8447466860" className="text-green-600 underline">
-                +91 84474 66860
+                +91 9560903877
               </a>
             </p>
           </div>
