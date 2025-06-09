@@ -19,8 +19,6 @@ const ContactUs = () => {
 
   return (
     <>
-      
-
       <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-bold text-gray-900 mb-8">
@@ -28,6 +26,26 @@ const ContactUs = () => {
             <span className="block w-16 h-1 bg-green-500 mt-2 rounded"></span>
           </h1>
 
+          {/* Contact Info Section */}
+          <div className="mb-8 bg-white shadow-md rounded-lg p-6">
+            <p className="text-gray-800 text-lg mb-2">
+              📧 Email:{" "}
+              <a
+                href="mailto:gurucharanbarick15@gmail.com"
+                className="text-green-600 underline"
+              >
+                gurucharanbarick15@gmail.com
+              </a>
+            </p>
+            <p className="text-gray-800 text-lg">
+              📞 Phone:{" "}
+              <a href="tel:8447466860" className="text-green-600 underline">
+                +91 84474 66860
+              </a>
+            </p>
+          </div>
+
+          {/* Contact Form */}
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="bg-white shadow-md rounded-lg p-8 space-y-6"

@@ -56,9 +56,9 @@ const Footer = () => {
               </Link>
             </li>
             <li>
-              <Link to="/shipping" className="hover:text-white">
+              {/* <Link to="/shipping" className="hover:text-white">
                 Shipping Info
-              </Link>
+              </Link> */}
             </li>
             <li>
               <Link to="/Privacy" className="hover:text-white">
@@ -124,7 +124,7 @@ const Footer = () => {
       </div>
 
       <div className="mt-10 border-t border-gray-700 pt-6 text-center text-sm text-gray-500">
-        © {new Date().getFullYear()} BookBazaar. All rights reserved.
+        © {new Date().getFullYear()} Readcycle. All rights reserved.
       </div>
     </footer>
   );
