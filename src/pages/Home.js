@@ -36,18 +36,18 @@ const promotionalBanners = [
   //   image: "https://via.placeholder.com/1200x400?text=Sell+Books",
   //   button: "Start Selling",
   // },
-  {
-    id: 3,
-    title: "Discover New Reads",
-    subtitle: "Explore hand-picked recommendations just for you",
-    image: "images/new.webp",
-    button: "Browse Collection",
-  },
-    {
+  // {
+  //   id: 3,
+  //   title: "Discover New Reads",
+  //   subtitle: "Explore hand-picked recommendations just for you",
+  //   image: "images/new.webp",
+  //   button: "Browse Collection",
+  // },
+    { 
     id: 4,
     title: "Find Your Inner Strength",
     subtitle: "Explore top self‑help books handpicked for personal growth",
-    image: "/images/self1.webp",
+    image: "/images/self-help2.jpg",
     button: "Discover Now",
   },
   {
