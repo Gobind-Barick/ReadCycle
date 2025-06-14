@@ -26,7 +26,7 @@ const promotionalBanners = [
     id: 1,
     title: "Big Book Sale",
     subtitle: "Up to 50% off on bestsellers and classics",
-    image: "https://via.placeholder.com/1200x400?text=Big+Book+Sale",
+    image: "images/manga1.jpg",
     button: "Shop Now",
   },
   {
@@ -43,6 +43,13 @@ const promotionalBanners = [
     image: "https://via.placeholder.com/1200x400?text=Discover+Books",
     button: "Browse Collection",
   },
+    {
+    id: 4,
+    title: "Find Your Inner Strength",
+    subtitle: "Explore top self‑help books handpicked for personal growth",
+    image: "/images/self-help2.jpg",
+    button: "Discover Now",
+  }
 ];
 
 const Home = () => {
@@ -92,7 +99,7 @@ const Home = () => {
               <img
                 src={banner.image}
                 alt={banner.title}
-                className="w-full h-64 md:h-96 object-cover"
+          className="w-full h-64 md:h-96 object-cover object-center"
               />
               <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white text-center px-4">
                 <h2 className="text-2xl md:text-4xl font-bold mb-2">
@@ -160,9 +167,9 @@ const Home = () => {
       />
 
       {/* Sell Your Books Section */}
-      <section className="py-16 px-6 md:px-20 mt-10 shadow-inner bg-white dark:bg-[#1f1f1f]">
-        <SellProcessSection />
-      </section>
+      {/* <section className="py-16 px-6 md:px-20 mt-10 shadow-inner bg-white dark:bg-[#1f1f1f]"> */}
+        {/* <SellProcessSection /> */}
+      {/* </section> */}
 
       <Footer />
     </div>

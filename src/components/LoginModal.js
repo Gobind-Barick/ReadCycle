@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setUser, setToken } from "../redux/userSlice"; // ✅ Make sure this path is correct
+import { setUser, setToken } from "../redux/userSlice";
 
 const LoginModal = ({ onClose, onSignupClick }) => {
   const [mobile, setMobile] = useState("");
@@ -10,7 +10,7 @@ const LoginModal = ({ onClose, onSignupClick }) => {
   const [isOtpSent, setOtpSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const dispatch = useDispatch(); // ✅ Redux dispatch
+  const dispatch = useDispatch();
 
   const handleSendOtp = async () => {
     if (mobile.length !== 10 || !/^\d{10}$/.test(mobile)) {
@@ -46,8 +46,6 @@ const LoginModal = ({ onClose, onSignupClick }) => {
       });
 
       const { token, user } = res.data;
-
-      // ✅ Set via Redux actions
       dispatch(setUser(user));
       dispatch(setToken(token));
     } catch (err) {
@@ -64,27 +62,29 @@ const LoginModal = ({ onClose, onSignupClick }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg w-96 relative">
+      <div className="bg-white dark:bg-gray-900 p-6 rounded-lg w-96 relative shadow-lg transition-all">
         <button
           onClick={onClose}
-          className="absolute top-2 right-3 text-gray-500 hover:text-black"
+          className="absolute top-2 right-3 text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white"
         >
           ✕
         </button>
 
-        <h2 className="text-xl font-bold mb-4 text-center">
+        <h2 className="text-xl font-bold mb-4 text-center text-gray-800 dark:text-white">
           {isOtpSent ? "Enter OTP" : "Login via WhatsApp"}
         </h2>
 
         {!isOtpSent ? (
           <>
-            <label className="block mb-2 text-sm font-medium">Mobile Number</label>
+            <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Mobile Number
+            </label>
             <input
               type="tel"
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
               maxLength={10}
-              className="w-full px-4 py-2 border border-gray-300 rounded mb-4"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded mb-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
               placeholder="Enter 10-digit mobile number"
             />
             <button
@@ -97,13 +97,15 @@ const LoginModal = ({ onClose, onSignupClick }) => {
           </>
         ) : (
           <>
-            <label className="block mb-2 text-sm font-medium">Enter OTP</label>
+            <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Enter OTP
+            </label>
             <input
               type="text"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               maxLength={6}
-              className="w-full px-4 py-2 border border-gray-300 rounded mb-4"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded mb-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
               placeholder="Enter OTP from WhatsApp"
             />
             <button
@@ -117,25 +119,25 @@ const LoginModal = ({ onClose, onSignupClick }) => {
         )}
 
         <div className="my-4 flex items-center">
-          <div className="flex-grow h-px bg-gray-300"></div>
-          <span className="px-2 text-gray-500 text-sm">or</span>
-          <div className="flex-grow h-px bg-gray-300"></div>
+          <div className="flex-grow h-px bg-gray-300 dark:bg-gray-600"></div>
+          <span className="px-2 text-gray-500 dark:text-gray-400 text-sm">or</span>
+          <div className="flex-grow h-px bg-gray-300 dark:bg-gray-600"></div>
         </div>
 
         <button
           onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center gap-2 border border-gray-300 py-2 rounded hover:bg-gray-100"
+          className="w-full flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
         >
           <FcGoogle className="text-xl" />
-          <span>Continue with Google</span>
+          <span className="text-gray-800 dark:text-gray-200">Continue with Google</span>
         </button>
 
-        <p className="text-center text-sm mt-4 text-gray-600">
+        {/* <p className="text-center text-sm mt-4 text-gray-600 dark:text-gray-400">
           Don’t have an account?{" "}
-          <button className="text-blue-600 underline" onClick={onSignupClick}>
+          <button className="text-blue-600 dark:text-blue-400 underline" onClick={onSignupClick}>
             Create an account
           </button>
-        </p>
+        </p> */}
       </div>
     </div>
   );

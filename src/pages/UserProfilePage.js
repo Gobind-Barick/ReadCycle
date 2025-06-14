@@ -108,44 +108,42 @@ const UserProfilePage = () => {
   };
 
   if (loading) {
-    return <div style={{ padding: "2rem", textAlign: "center" }}>Loading profile data...</div>;
+    return <div className="p-8 text-center dark:bg-[#0f0f0f] bg-white text-black dark:text-white">Loading profile data...</div>;
   }
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "900px", margin: "0 auto" }}>
-      <h2>User Profile</h2>
+    <div className="p-8 w-full min-h-screen bg-white text-black dark:bg-gray-900 dark:text-white">
+
+      <h2 className="text-2xl font-semibold mb-6">User Profile</h2>
+
       {user && (
-        <div style={{ marginBottom: "2rem" }}>
+        <div className="mb-8">
           <p><strong>Name:</strong> {user.name}</p>
           <p><strong>Email:</strong> {user.email}</p>
           <img
             src={user.avatarUrl || "https://www.gravatar.com/avatar/?d=mp"}
             alt="avatar"
-            width={80}
-            height={80}
-            style={{ borderRadius: "50%", marginTop: "1rem" }}
+            className="mt-4 w-20 h-20 rounded-full"
           />
         </div>
       )}
 
       {/* Addresses */}
-      <h3>Saved Addresses</h3>
-      <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+      <h3 className="text-xl font-semibold mb-4">Saved Addresses</h3>
+      <ul className="space-y-4">
         {addresses.map((address) => (
-          <li key={address.id} style={{ border: "1px solid #ccc", borderRadius: "6px", padding: "1rem", marginBottom: "1rem" }}>
+          <li key={address.id} className="border border-gray-300 dark:border-gray-700 rounded-lg p-4">
             <p><strong>{address.name}</strong></p>
             <p>{address.street}, {address.city}, {address.state} - {address.postalCode}</p>
             <p>{address.country}</p>
             <p>Phone: {address.phone}</p>
-            {address.isDefault && <p><em>Default Address</em></p>}
+            {address.isDefault && <p className="italic text-green-600">Default Address</p>}
             <button
               onClick={() => handleDelete(address.id)}
               disabled={deletingAddressId === address.id}
-              style={{
-                marginTop: "0.5rem", backgroundColor: "red", color: "white",
-                border: "none", padding: "0.4rem 0.8rem", borderRadius: "4px",
-                cursor: "pointer", opacity: deletingAddressId === address.id ? 0.6 : 1
-              }}
+              className={`mt-2 px-4 py-2 rounded bg-red-600 text-white ${
+                deletingAddressId === address.id ? "opacity-50 cursor-not-allowed" : "hover:bg-red-700"
+              }`}
             >
               {deletingAddressId === address.id ? "Deleting..." : "Delete"}
             </button>
@@ -154,51 +152,47 @@ const UserProfilePage = () => {
       </ul>
 
       {/* Add Address */}
-      <h3>Add New Address</h3>
-      <form onSubmit={handleAddAddress} style={{ display: "flex", flexDirection: "column", gap: "0.5rem", maxWidth: "400px" }}>
-        <input type="text" placeholder="Name" value={newAddress.name} onChange={(e) => setNewAddress({ ...newAddress, name: e.target.value })} required />
-        <input type="text" placeholder="Street" value={newAddress.street} onChange={(e) => setNewAddress({ ...newAddress, street: e.target.value })} required />
-        <input type="text" placeholder="City" value={newAddress.city} onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })} required />
-        <input type="text" placeholder="State" value={newAddress.state} onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })} required />
-        <input type="text" placeholder="Postal Code" value={newAddress.postalCode} onChange={(e) => setNewAddress({ ...newAddress, postalCode: e.target.value })} required />
-        <input type="text" placeholder="Phone" value={newAddress.phone} onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value })} required />
-        <label>
-          <input type="checkbox" checked={newAddress.isDefault} onChange={(e) => setNewAddress({ ...newAddress, isDefault: e.target.checked })} /> Make Default
+      <h3 className="text-xl font-semibold mt-10 mb-4">Add New Address</h3>
+      <form onSubmit={handleAddAddress} className="space-y-3 max-w-md">
+        <input type="text" placeholder="Name" value={newAddress.name} onChange={(e) => setNewAddress({ ...newAddress, name: e.target.value })} required className="w-full p-2 border border-gray-300 rounded" />
+        <input type="text" placeholder="Street" value={newAddress.street} onChange={(e) => setNewAddress({ ...newAddress, street: e.target.value })} required className="w-full p-2 border border-gray-300 rounded" />
+        <input type="text" placeholder="City" value={newAddress.city} onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })} required className="w-full p-2 border border-gray-300 rounded" />
+        <input type="text" placeholder="State" value={newAddress.state} onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })} required className="w-full p-2 border border-gray-300 rounded" />
+        <input type="text" placeholder="Postal Code" value={newAddress.postalCode} onChange={(e) => setNewAddress({ ...newAddress, postalCode: e.target.value })} required className="w-full p-2 border border-gray-300 rounded" />
+        <input type="text" placeholder="Phone" value={newAddress.phone} onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value })} required className="w-full p-2 border border-gray-300 rounded" />
+        <label className="flex items-center gap-2">
+          <input type="checkbox" checked={newAddress.isDefault} onChange={(e) => setNewAddress({ ...newAddress, isDefault: e.target.checked })} />
+          Make Default
         </label>
-        <button type="submit" style={{ padding: "0.6rem", backgroundColor: "#2563eb", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }}>
-          Save Address
-        </button>
+        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save Address</button>
       </form>
 
       {/* Order History */}
-      <h3 style={{ marginTop: "3rem" }}>Past Orders</h3>
+      <h3 className="text-xl font-semibold mt-10 mb-4">Past Orders</h3>
       {orders.length === 0 ? (
         <p>No past orders found.</p>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+        <div className="flex flex-col gap-6">
           {orders.map((order) => (
-            <div key={order.id} style={{ border: "1px solid #ddd", borderRadius: "6px", padding: "1rem", backgroundColor: "#f9f9f9" }}>
+            <div key={order.id} className="border border-gray-300 dark:border-gray-700 rounded-lg p-4 bg-gray-100 dark:bg-gray-800">
               <p><strong>Order ID:</strong> {order.id}</p>
               <p><strong>Date:</strong> {new Date(order.orderDate).toLocaleDateString()}</p>
               <p><strong>Status:</strong> {order.status || "Pending"}</p>
-              <ul style={{ paddingLeft: "1rem" }}>
+              <ul className="ml-4 list-disc">
                 {order.items && order.items.map((item, index) => (
                   <li key={index}>
                     <p><strong>Title:</strong> {item.title}<br /><strong>Author:</strong> {item.author}<br />Quantity: {item.quantity} | Price: ₹{item.price}</p>
                   </li>
                 ))}
               </ul>
-              <p><strong>Total:</strong> ₹{order.totalAmount}</p>
+              <p className="mt-2"><strong>Total:</strong> ₹{order.totalAmount}</p>
               {order.awb && (
                 <button
                   onClick={() => {
                     setTrackingId(order.awb);
-                    setTrackingData(null); // Reset before new fetch
+                    setTrackingData(null);
                   }}
-                  style={{
-                    marginTop: "0.8rem", backgroundColor: "#22c55e", color: "white",
-                    border: "none", padding: "0.5rem 1rem", borderRadius: "5px"
-                  }}
+                  className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >
                   Track
                 </button>
@@ -208,7 +202,7 @@ const UserProfilePage = () => {
         </div>
       )}
 
-      {/* Modal */}
+      {/* Tracking Modal */}
       {trackingId && trackingData && (
         <OrderTrackingModal
           trackingData={trackingData}
