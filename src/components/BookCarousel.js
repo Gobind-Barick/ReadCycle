@@ -52,11 +52,11 @@ const BookCarousel = ({ title, books }) => {
       },
       {
         breakpoint: 480,
-        settings: { slidesToShow: 3 },
+        settings: { slidesToShow: 2 },
       },
       {
         breakpoint: 360,
-        settings: { slidesToShow: 3 },
+        settings: { slidesToShow: 2 },
       },
     ],
   };
