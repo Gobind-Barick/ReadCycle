@@ -96,7 +96,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0f1014] text-gray-900 dark:text-white transition-all duration-300">
+  <div className="min-h-screen overflow-x-hidden bg-gray-50 dark:bg-[#0f1014] text-gray-900 dark:text-white transition-all duration-300">
 
       {/* Hero/Promotional Carousel */}
       <section className="relative">
