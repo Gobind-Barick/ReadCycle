@@ -49,7 +49,8 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-white dark:bg-gray-900 shadow px-4 py-3 md:px-10 flex justify-between items-center">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-white dark:bg-gray-900 shadow px-4 py-3 md:px-10 flex justify-between items-center">
+
         <Link to="/" className="text-2xl font-bold text-black dark:text-white">Readcycle</Link>
 
         <div className="md:hidden">
@@ -57,8 +58,8 @@ const Navbar = () => {
             {mobileMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
           </button>
         </div>
+<div className="hidden md:flex items-center space-x-6 text-md text-black dark:text-white font-semibold">
 
-        <div className="hidden md:flex items-center space-x-6 text-sm">
           <form onSubmit={handleSearch} className="relative">
             <input
               type="text"
