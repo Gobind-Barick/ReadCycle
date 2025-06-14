@@ -8,8 +8,10 @@ export const ProductCardNarrow = ({ product }) => {
         bg-white dark:bg-gray-900 
         text-gray-900 dark:text-white 
         rounded-lg shadow-lg 
-        w-[200px] h-[350px] 
-        transform transition-transform duration-200 scale-90 hover:scale-100
+        w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px] 
+        h-[300px] sm:h-[320px] md:h-[340px] lg:h-[350px]
+        mx-auto
+        transform transition-transform duration-200 scale-95 hover:scale-100
       "
     >
       {/* Platform Badge */}
@@ -17,41 +19,34 @@ export const ProductCardNarrow = ({ product }) => {
         SALE!
       </div>
 
-      {/* Pre-Owned Tag */}
-      {/* <div className="absolute top-2 right-0 bg-yellow-600 text-white text-xs px-2 py-0.5 rounded-l z-10">
-        Pre Owned
-      </div> */}
-
-      {/* Image with padding and rounded corners */}
+      {/* Image */}
       <div className="p-2 pt-4 pb-1">
         <img
           src={product.imageUrl}
           alt={product.title}
-          className="w-full h-56 object-cover rounded-md"
+          className="w-full h-40 sm:h-44 md:h-48 object-cover rounded-md"
         />
       </div>
 
       {/* Content */}
-      <div className="px-3 pb-4 flex flex-col gap-2">
-        {/* Title */}
-        <h3 className="text-sm font-semibold text-center leading-tight h-[40px]">
+      <div className="px-2 sm:px-3 pb-3 flex flex-col gap-2">
+        <h3 className="text-xs sm:text-sm font-semibold text-center leading-tight h-[36px] sm:h-[40px] overflow-hidden">
           {product.title}
         </h3>
 
-        {/* Price & Button Row */}
-        <div className="flex items-center justify-between mt-2">
+        <div className="flex items-center justify-between mt-1">
           <div>
-            <div className="font-bold text-base text-gray-900 dark:text-white">
+            <div className="font-bold text-sm sm:text-base text-gray-900 dark:text-white">
               ₹ {product.price.toLocaleString()}
             </div>
-            <div className="text-xs text-gray-400 dark:text-gray-500 line-through">
+            <div className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500 line-through">
               ₹ {(product.price + 300).toLocaleString()}
             </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <div className="h-6 w-px bg-gray-300 dark:bg-gray-600"></div>
+          <div className="flex items-center space-x-2">
+            <div className="h-5 w-px bg-gray-300 dark:bg-gray-600"></div>
 
-            <button className="bg-green-500 hover:bg-green-600 w-10 h-10 rounded-md text-white text-xl flex items-center justify-center transition">
+            <button className="bg-green-500 hover:bg-green-600 w-8 h-8 sm:w-10 sm:h-10 rounded-md text-white text-base flex items-center justify-center transition">
               +
             </button>
           </div>
@@ -60,60 +55,3 @@ export const ProductCardNarrow = ({ product }) => {
     </div>
   );
 };
-
-const ProductCard = ({ product }) => {
-  return (
-    <div
-      className="
-        relative 
-        bg-white dark:bg-gray-900 
-        p-4 rounded shadow hover:shadow-lg 
-        w-full h-full 
-        transform scale-95 hover:scale-100 transition-transform duration-150
-        text-gray-900 dark:text-white
-      "
-    >
-      {/* Top Badges */}
-      <div className="absolute top-2 left-2 flex space-x-1 z-10">
-        <span className="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">
-          SALE!
-        </span>
-        <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-          PRE-OWNED
-        </span>
-      </div>
-
-      {/* Product Image */}
-      <img
-        src={product.imageUrl}
-        alt={product.title}
-        className="w-full h-40 object-contain mb-3 rounded"
-      />
-
-      {/* Title */}
-      <h3 className="text-sm font-semibold mb-1">{product.title}</h3>
-
-      {/* Pricing */}
-      <div className="mb-1">
-        <span className="text-gray-400 dark:text-gray-500 line-through text-sm mr-2">
-          Rs. {(product.price + 400).toLocaleString()}
-        </span>
-        <span className="font-bold text-lg text-gray-900 dark:text-white">
-          Rs. {product.price.toLocaleString()}
-        </span>
-      </div>
-
-      {/* Stock and Button Row */}
-      <div className="flex mt-2 space-x-2">
-        <span className="w-1/2 text-green-600 dark:text-green-400 text-sm font-medium flex items-center justify-center border border-green-600 dark:border-green-400 rounded">
-          In Stock
-        </span>
-        <button className="w-1/2 bg-black dark:bg-gray-700 text-white py-2 text-sm font-semibold rounded hover:bg-gray-800 dark:hover:bg-gray-600 transition">
-          ADD TO CART
-        </button>
-      </div>
-    </div>
-  );
-};
-
-export default ProductCard;
