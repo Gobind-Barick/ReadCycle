@@ -29,12 +29,12 @@ const UserProfilePage = () => {
 
       setLoading(true);
       try {
-        const addressRes = await axios.get("https://readcycle-backend-gyud.onrender.com/api/addresses", {
+        const addressRes = await axios.get("http://localhost:8080/api/addresses", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAddresses(addressRes.data);
 
-        const ordersRes = await axios.get("https://readcycle-backend-gyud.onrender.com/api/orders", {
+        const ordersRes = await axios.get("http://localhost:8080/api/orders", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setOrders(ordersRes.data);
@@ -58,7 +58,7 @@ const UserProfilePage = () => {
       if (!trackingId) return;
 
       try {
-        const res = await axios.get(`https://readcycle-backend-gyud.onrender.com/api/orders/track/${trackingId}`, {
+        const res = await axios.get(`http://localhost:8080/api/addresses/${trackingId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setTrackingData(res.data);
@@ -75,7 +75,7 @@ const UserProfilePage = () => {
   const handleAddAddress = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("https://readcycle-backend-gyud.onrender.com/api/addresses", newAddress, {
+      const res = await axios.post("http://localhost:8080/api/addresses", newAddress, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAddresses([...addresses, res.data]);

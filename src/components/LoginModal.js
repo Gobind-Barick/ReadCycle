@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setUser, setToken } from "../redux/userSlice"; // ✅ Make sure this path is correct
 
 const LoginModal = ({ onClose, onSignupClick }) => {
   const [mobile, setMobile] = useState("");
@@ -8,27 +10,25 @@ const LoginModal = ({ onClose, onSignupClick }) => {
   const [isOtpSent, setOtpSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const dispatch = useDispatch(); // ✅ Redux dispatch
+
   const handleSendOtp = async () => {
-  if (mobile.length !== 10 || !/^\d{10}$/.test(mobile)) {
-    alert("Please enter a valid 10-digit mobile number");
-    return;
-  }
+    if (mobile.length !== 10 || !/^\d{10}$/.test(mobile)) {
+      alert("Please enter a valid 10-digit mobile number");
+      return;
+    }
 
-  try {
-    setIsLoading(true);
-
-    // ✅ Send mobile as query param, not in body
-    await axios.post(`https://readcycle-backend-gyud.onrender.com/api/auth/send-otp?mobile=${mobile}`);
-
-    setOtpSent(true);
-  } catch (err) {
-    alert("Failed to send OTP. Please try again.");
-    console.error(err);
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+    try {
+      setIsLoading(true);
+      await axios.post(`http://localhost:8080/api/auth/send-otp?mobile=${mobile}`);
+      setOtpSent(true);
+    } catch (err) {
+      alert("Failed to send OTP. Please try again.");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleVerifyOtp = async () => {
     if (otp.length !== 6) {
@@ -40,16 +40,16 @@ const LoginModal = ({ onClose, onSignupClick }) => {
       setIsLoading(true);
       const fullPhone = "91" + mobile;
 
-      const res = await axios.post("https://readcycle-backend-gyud.onrender.com/api/auth/verify-otp", {
+      const res = await axios.post("http://localhost:8080/api/auth/verify-otp", {
         phone: fullPhone,
         otp: otp,
       });
 
       const { token, user } = res.data;
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-      window.location.reload();
+      // ✅ Set via Redux actions
+      dispatch(setUser(user));
+      dispatch(setToken(token));
     } catch (err) {
       alert("Invalid OTP or verification failed");
       console.error(err);
@@ -59,7 +59,7 @@ const LoginModal = ({ onClose, onSignupClick }) => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "https://readcycle-backend-gyud.onrender.com/oauth2/authorization/google";
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
   return (
