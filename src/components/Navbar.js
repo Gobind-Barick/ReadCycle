@@ -118,7 +118,8 @@ const Navbar = () => {
 
       {/* Mobile Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white dark:bg-gray-900 px-4 pb-4 space-y-3 text-sm">
+        <div className="md:hidden bg-white dark:bg-gray-900 px-4 pb-4 space-y-3 text-sm text-gray-800 dark:text-white font-semibold">
+
           <form onSubmit={handleSearch}>
             <input
               type="text"
