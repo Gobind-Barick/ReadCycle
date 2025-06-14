@@ -24,32 +24,39 @@ const CATEGORIES = [
 const promotionalBanners = [
   {
     id: 1,
-    title: "Big Book Sale",
-    subtitle: "Up to 50% off on bestsellers and classics",
-    image: "images/manga1.jpg",
+    title: "Explore Iconic Manga",
+    subtitle: "Top-selling Manga series for every anime lover",
+    image: "images/mangaup.webp",
     button: "Shop Now",
   },
-  {
-    id: 2,
-    title: "Declutter Your Shelf",
-    subtitle: "Sell your old books easily and earn money",
-    image: "https://via.placeholder.com/1200x400?text=Sell+Books",
-    button: "Start Selling",
-  },
+  // {
+  //   id: 2,
+  //   title: "Declutter Your Shelf",
+  //   subtitle: "Sell your old books easily and earn money",
+  //   image: "https://via.placeholder.com/1200x400?text=Sell+Books",
+  //   button: "Start Selling",
+  // },
   {
     id: 3,
     title: "Discover New Reads",
     subtitle: "Explore hand-picked recommendations just for you",
-    image: "https://via.placeholder.com/1200x400?text=Discover+Books",
+    image: "images/new.webp",
     button: "Browse Collection",
   },
     {
     id: 4,
     title: "Find Your Inner Strength",
     subtitle: "Explore top self‑help books handpicked for personal growth",
-    image: "/images/self-help2.jpg",
+    image: "/images/self1.webp",
     button: "Discover Now",
-  }
+  },
+  {
+  id: 5,
+  title: "Hindi Sahitya Collection",
+  subtitle: "Rediscover timeless Hindi literature and classics",
+  image: "/images/hindi1.avif", // Place your Hindi literature image here
+  button: "Browse Collection"
+}
 ];
 
 const Home = () => {
@@ -105,7 +112,9 @@ const Home = () => {
                 <h2 className="text-2xl md:text-4xl font-bold mb-2">
                   {banner.title}
                 </h2>
-                <p className="text-md md:text-lg mb-4">{banner.subtitle}</p>
+                <p className="text-md md:text-lg mb-4 font-bold drop-shadow-sm md:drop-shadow text-white">
+  {banner.subtitle}
+</p>
                 <button className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm md:text-base">
                   {banner.button}
                 </button>
