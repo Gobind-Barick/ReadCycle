@@ -48,15 +48,15 @@ const BookCarousel = ({ title, books }) => {
       },
       {
         breakpoint: 640,
-        settings: { slidesToShow: 2 },
+        settings: { slidesToShow: 3 },
       },
       {
         breakpoint: 480,
-        settings: { slidesToShow: 1.4 },
+        settings: { slidesToShow: 3 },
       },
       {
         breakpoint: 360,
-        settings: { slidesToShow: 1.2 },
+        settings: { slidesToShow: 3 },
       },
     ],
   };

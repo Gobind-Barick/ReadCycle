@@ -1,4 +1,3 @@
-
 import React from "react";
 
 export const ProductCardNarrow = ({ product }) => {
@@ -9,44 +8,50 @@ export const ProductCardNarrow = ({ product }) => {
         bg-white dark:bg-gray-900 
         text-gray-900 dark:text-white 
         rounded-lg shadow-lg 
-        w-[200px] sm:w-[180px] xs:w-[140px] min-w-[120px] h-[340px]
-        transform transition-transform duration-200 scale-95 hover:scale-100
+        w-[200px] h-[350px] 
+        transform transition-transform duration-200 scale-90 hover:scale-100
       "
     >
-      {/* SALE Badge */}
+      {/* Platform Badge */}
       <div className="absolute top-2 left-2 bg-blue-700 text-white text-xs px-2 py-0.5 rounded z-10">
         SALE!
       </div>
 
-      {/* Image */}
+      {/* Pre-Owned Tag */}
+      {/* <div className="absolute top-2 right-0 bg-yellow-600 text-white text-xs px-2 py-0.5 rounded-l z-10">
+        Pre Owned
+      </div> */}
+
+      {/* Image with padding and rounded corners */}
       <div className="p-2 pt-4 pb-1">
         <img
           src={product.imageUrl}
           alt={product.title}
-          className="w-full h-48 object-cover rounded-md"
+          className="w-full h-56 object-cover rounded-md"
         />
       </div>
 
       {/* Content */}
       <div className="px-3 pb-4 flex flex-col gap-2">
         {/* Title */}
-        <h3 className="text-xs font-semibold text-center leading-tight h-[36px] line-clamp-2">
+        <h3 className="text-sm font-semibold text-center leading-tight h-[40px]">
           {product.title}
         </h3>
 
         {/* Price & Button Row */}
-        <div className="flex items-center justify-between mt-1">
+        <div className="flex items-center justify-between mt-2">
           <div>
-            <div className="font-bold text-sm text-gray-900 dark:text-white">
+            <div className="font-bold text-base text-gray-900 dark:text-white">
               ₹ {product.price.toLocaleString()}
             </div>
-            <div className="text-[10px] text-gray-400 dark:text-gray-500 line-through">
+            <div className="text-xs text-gray-400 dark:text-gray-500 line-through">
               ₹ {(product.price + 300).toLocaleString()}
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className="h-5 w-px bg-gray-300 dark:bg-gray-600"></div>
-            <button className="bg-green-500 hover:bg-green-600 w-8 h-8 rounded-md text-white text-base flex items-center justify-center transition">
+          <div className="flex items-center space-x-4">
+            <div className="h-6 w-px bg-gray-300 dark:bg-gray-600"></div>
+
+            <button className="bg-green-500 hover:bg-green-600 w-10 h-10 rounded-md text-white text-xl flex items-center justify-center transition">
               +
             </button>
           </div>
@@ -55,7 +60,6 @@ export const ProductCardNarrow = ({ product }) => {
     </div>
   );
 };
-
 
 const ProductCard = ({ product }) => {
   return (

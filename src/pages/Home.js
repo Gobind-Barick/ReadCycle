@@ -1,4 +1,3 @@
-// src/pages/Home.js
 import React, { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import Slider from "react-slick";
@@ -6,6 +5,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import BookCarousel from "../components/BookCarousel";
 import Footer from "../components/Footer";
+import SellProcessSection from "../components/ProcessSection";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 
 const CATEGORIES = [
@@ -29,7 +29,21 @@ const promotionalBanners = [
     image: "images/mangaup.webp",
     button: "Shop Now",
   },
-  {
+  // {
+  //   id: 2,
+  //   title: "Declutter Your Shelf",
+  //   subtitle: "Sell your old books easily and earn money",
+  //   image: "https://via.placeholder.com/1200x400?text=Sell+Books",
+  //   button: "Start Selling",
+  // },
+  // {
+  //   id: 3,
+  //   title: "Discover New Reads",
+  //   subtitle: "Explore hand-picked recommendations just for you",
+  //   image: "images/new.webp",
+  //   button: "Browse Collection",
+  // },
+    { 
     id: 4,
     title: "Find Your Inner Strength",
     subtitle: "Explore top self‑help books handpicked for personal growth",
@@ -37,12 +51,12 @@ const promotionalBanners = [
     button: "Discover Now",
   },
   {
-    id: 5,
-    title: "Hindi Sahitya Collection",
-    subtitle: "Rediscover timeless Hindi literature and classics",
-    image: "/images/hindi1.avif",
-    button: "Browse Collection",
-  },
+  id: 5,
+  title: "Hindi Sahitya Collection",
+  subtitle: "Rediscover timeless Hindi literature and classics",
+  image: "/images/hindi1.avif", // Place your Hindi literature image here
+  button: "Browse Collection"
+}
 ];
 
 const Home = () => {
@@ -52,8 +66,12 @@ const Home = () => {
   useEffect(() => {
     axios
       .get("https://readcycle-backend-gyud.onrender.com/api/books")
-      .then((res) => setBooks(res.data))
-      .catch((err) => console.error("Failed to fetch books:", err));
+      .then((response) => {
+        setBooks(response.data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch books:", error);
+      });
   }, []);
 
   const scrollCarousel = (direction) => {
@@ -74,26 +92,30 @@ const Home = () => {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 4000,
-    arrows: false,
+    arrows: true,
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0f1014] text-gray-900 dark:text-white transition-all duration-300 overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0f1014] text-gray-900 dark:text-white transition-all duration-300">
 
-      {/* Hero Carousel */}
+      {/* Hero/Promotional Carousel */}
       <section className="relative">
         <Slider {...carouselSettings}>
           {promotionalBanners.map((banner) => (
-            <div key={banner.id} className="relative w-full">
+            <div key={banner.id} className="relative">
               <img
                 src={banner.image}
                 alt={banner.title}
-                className="w-full h-64 sm:h-80 md:h-96 object-cover"
+          className="w-full h-64 md:h-96 object-cover object-center"
               />
               <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white text-center px-4">
-                <h2 className="text-2xl md:text-4xl font-bold mb-2">{banner.title}</h2>
-                <p className="text-sm md:text-lg font-semibold mb-4">{banner.subtitle}</p>
-                <button className="bg-green-600 hover:bg-green-700 px-4 py-2 text-sm md:text-base rounded">
+                <h2 className="text-2xl md:text-4xl font-bold mb-2">
+                  {banner.title}
+                </h2>
+                <p className="text-md md:text-lg mb-4 font-bold drop-shadow-sm md:drop-shadow text-white">
+  {banner.subtitle}
+</p>
+                <button className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm md:text-base">
                   {banner.button}
                 </button>
               </div>
@@ -103,36 +125,39 @@ const Home = () => {
       </section>
 
       {/* Categories Carousel */}
-      <section className="py-10 px-4 sm:px-6 bg-gray-100 dark:bg-[#1a1a1a]">
-        <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">Top Categories</h2>
-        <div className="relative">
+      <section className="py-12 px-6 sm:px-10 relative bg-gray-100 dark:bg-[#1a1a1a]">
+        <h2 className="text-2xl font-bold mb-8 text-center">Top Categories</h2>
+        <div className="relative flex items-center">
           <button
             onClick={() => scrollCarousel(-1)}
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-800 p-2 rounded-full shadow"
+            className="absolute left-2 z-20 bg-white/80 dark:bg-gray-800 backdrop-blur shadow-md p-3 rounded-full hover:bg-white dark:hover:bg-gray-700 transition"
           >
             <FaChevronLeft />
           </button>
+
           <div
             ref={carouselRef}
-            className="flex overflow-x-auto gap-4 px-8 py-4 scroll-smooth no-scrollbar"
+            className="flex overflow-x-auto gap-4 px-6 sm:px-10 py-4 scroll-smooth"
+            style={{ scrollbarWidth: "none" }}
           >
             {CATEGORIES.map((cat) => {
               const slug = cat.name.toLowerCase().replace(/\s+/g, "-");
               return (
                 <Link
-                  key={cat.name}
                   to={`/product-category/${slug}`}
-                  className="min-w-[110px] sm:min-w-[130px] bg-gray-900 dark:bg-gray-800 p-4 rounded-xl text-center text-white hover:scale-105 transform transition"
+                  key={cat.name}
+                  className="min-w-[140px] bg-gray-900 dark:bg-gray-800 p-5 rounded-xl shadow text-center flex-shrink-0 hover:shadow-lg transform hover:scale-105 transition-all duration-200"
                 >
-                  <div className="text-2xl mb-1">{cat.icon}</div>
-                  <p className="text-xs sm:text-sm">{cat.name}</p>
+                  <div className="text-3xl mb-2">{cat.icon}</div>
+                  <p className="text-sm font-medium text-white">{cat.name}</p>
                 </Link>
               );
             })}
           </div>
+
           <button
             onClick={() => scrollCarousel(1)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-800 p-2 rounded-full shadow"
+            className="absolute right-2 z-20 bg-white/80 dark:bg-gray-800 backdrop-blur shadow-md p-3 rounded-full hover:bg-white dark:hover:bg-gray-700 transition"
           >
             <FaChevronRight />
           </button>
@@ -140,9 +165,20 @@ const Home = () => {
       </section>
 
       {/* Book Carousels */}
-      <BookCarousel title="📚 Best Sellers" books={books.slice(0, 10)} />
-      <BookCarousel title="🔥 Top Deals" books={books.filter((b) => b.price < 400)} />
-      <BookCarousel title="💸 Books Under ₹300" books={books.filter((b) => b.price <= 300)} />
+      <BookCarousel title="📚 Best Sellers" books={books.slice(1, 10)} />
+      <BookCarousel
+        title="🔥 Top Deals"
+        books={books.filter((b) => b.price < 400)}
+      />
+      <BookCarousel
+        title="💸 Books Under ₹300"
+        books={books.filter((b) => b.price <= 300)}
+      />
+
+      {/* Sell Your Books Section */}
+      {/* <section className="py-16 px-6 md:px-20 mt-10 shadow-inner bg-white dark:bg-[#1f1f1f]"> */}
+        {/* <SellProcessSection /> */}
+      {/* </section> */}
 
       <Footer />
     </div>
