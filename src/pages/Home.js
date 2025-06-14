@@ -106,13 +106,16 @@ const Home = () => {
               <img
                 src={banner.image}
                 alt={banner.title}
-          className="w-full h-64 md:h-96 object-cover object-center"
+                  className="w-full h-64 md:h-96 object-cover object-center filter brightness-[0.6]"
+
               />
-              <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white text-center px-4">
-                <h2 className="text-2xl md:text-4xl font-bold mb-2">
+              <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/40 flex flex-col justify-center items-center text-white text-center px-4">
+<h2 className="text-2xl md:text-4xl font-bold mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+
                   {banner.title}
                 </h2>
-                <p className="text-md md:text-lg mb-4 font-bold drop-shadow-sm md:drop-shadow text-white">
+                <p className="text-md md:text-lg mb-4 font-bold drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)] text-white">
+
   {banner.subtitle}
 </p>
                 <button className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm md:text-base">
