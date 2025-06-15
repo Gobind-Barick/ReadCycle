@@ -19,6 +19,13 @@ const SellBook = () => {
     landmark: "",
     shippingMethod: "pickup",
     pickupSlot: "",
+    paymentMethod: "",
+    upiName: "",
+    upiId: "",
+    upiPhone: "",
+    bankAccountNumber: "",
+    bankAccountHolder: "",
+    ifscCode: "",
   });
 
   useEffect(() => {
@@ -30,7 +37,6 @@ const SellBook = () => {
         console.error("Failed to fetch book details:", err);
       }
     };
-
     fetchBook();
   }, [id]);
 
@@ -44,11 +50,11 @@ const SellBook = () => {
 
   const handleSubmit = async () => {
     try {
-      console.log("Submitting sell order:", formData);
+      console.log("Final submission:", formData);
       alert("Sell order placed successfully!");
     } catch (err) {
-      console.error("Failed to place sell order:", err);
-      alert("Something went wrong while placing the order.");
+      console.error("Error submitting sell order:", err);
+      alert("Something went wrong!");
     }
   };
 
@@ -65,81 +71,135 @@ const SellBook = () => {
         <h1 className="text-3xl font-bold mb-4 text-center text-gray-800 dark:text-white">
           Sell Your Book
         </h1>
-        <p className="text-center text-gray-500 mb-6 dark:text-gray-400">
-          You are selling: <strong>{book.title}</strong>
+        <p className="text-center text-gray-500 mb-2 dark:text-gray-400">
+          You are selling: <strong>{book.title}</strong> for ₹{book.sellPrice}
         </p>
 
+        {/* Step 1: Contact Details */}
         {step === 1 && (
-          <div>
+          <>
             <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-white">Step 1: Contact Details</h2>
             <div className="space-y-4">
-              <input name="name" value={formData.name} onChange={handleChange} placeholder="Full Name" className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white" />
-              <input name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone Number" className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white" />
-              <input name="email" value={formData.email} onChange={handleChange} placeholder="Email (optional)" className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white" />
+              <input name="name" value={formData.name} onChange={handleChange} placeholder="Full Name" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
+              <input name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone Number" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
+              <input name="email" value={formData.email} onChange={handleChange} placeholder="Email (optional)" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
             </div>
             <div className="flex justify-end mt-6">
               <button onClick={handleNext} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Next</button>
             </div>
-          </div>
+          </>
         )}
 
+        {/* Step 2: Shipping Address */}
         {step === 2 && (
-          <div>
+          <>
             <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-white">Step 2: Shipping Address</h2>
             <div className="space-y-4">
-              <input name="addressLine1" value={formData.addressLine1} onChange={handleChange} placeholder="Address Line 1" className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white" />
-              <input name="addressLine2" value={formData.addressLine2} onChange={handleChange} placeholder="Address Line 2" className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white" />
-              <input name="city" value={formData.city} onChange={handleChange} placeholder="City" className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white" />
-              <input name="state" value={formData.state} onChange={handleChange} placeholder="State" className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white" />
-              <input name="pincode" value={formData.pincode} onChange={handleChange} placeholder="Pin Code" className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white" />
-              <input name="country" value={formData.country} onChange={handleChange} placeholder="Country" className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white" />
-              <input name="landmark" value={formData.landmark} onChange={handleChange} placeholder="Landmark" className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white" />
+              <input name="addressLine1" value={formData.addressLine1} onChange={handleChange} placeholder="Address Line 1" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
+              <input name="addressLine2" value={formData.addressLine2} onChange={handleChange} placeholder="Address Line 2" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
+              <input name="city" value={formData.city} onChange={handleChange} placeholder="City" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
+              <input name="state" value={formData.state} onChange={handleChange} placeholder="State" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
+              <input name="pincode" value={formData.pincode} onChange={handleChange} placeholder="Pin Code" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
+              <input name="country" value={formData.country} onChange={handleChange} placeholder="Country" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
+              <input name="landmark" value={formData.landmark} onChange={handleChange} placeholder="Landmark" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
             </div>
             <div className="flex justify-between mt-6">
               <button onClick={handleBack} className="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">Back</button>
               <button onClick={handleNext} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Next</button>
             </div>
-          </div>
+          </>
         )}
 
+        {/* Step 3: Pickup Slot */}
         {step === 3 && (
-          <div>
+          <>
             <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-white">Step 3: Pickup Slot</h2>
-            <div className="mb-6">
-              <p className="text-gray-600 mb-2 dark:text-gray-300">Choose a convenient pickup time slot:</p>
-              <div className="flex flex-wrap gap-3">
-                {[
-                  "9:00 AM - 12:00 PM",
-                  "12:00 PM - 3:00 PM",
-                  "3:00 PM - 6:00 PM",
-                  "6:00 PM - 9:00 PM"
-                ].map((slot) => (
-                  <button
-                    key={slot}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, pickupSlot: slot })}
-                    className={`px-4 py-2 rounded-lg border transition ${
-                      formData.pickupSlot === slot
-                        ? "bg-green-600 text-white border-green-600"
-                        : "bg-gray-100 text-black border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-white"
-                    }`}
-                  >
-                    {slot}
-                  </button>
-                ))}
-              </div>
+            <p className="text-gray-600 mb-2 dark:text-gray-300">Choose a convenient pickup time slot:</p>
+            <div className="flex flex-wrap gap-3">
+              {["9:00 AM - 12:00 PM", "12:00 PM - 3:00 PM", "3:00 PM - 6:00 PM", "6:00 PM - 9:00 PM"].map((slot) => (
+                <button
+                  key={slot}
+                  onClick={() => setFormData({ ...formData, pickupSlot: slot })}
+                  className={`px-4 py-2 rounded-lg border transition ${
+                    formData.pickupSlot === slot
+                      ? "bg-green-600 text-white border-green-600"
+                      : "bg-gray-100 text-black border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-white"
+                  }`}
+                >
+                  {slot}
+                </button>
+              ))}
             </div>
             <div className="flex justify-between mt-6">
               <button onClick={handleBack} className="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">Back</button>
-              <button
-                onClick={handleSubmit}
-                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
-                disabled={!formData.pickupSlot}
-              >
-                Place Order
+              <button onClick={handleNext} disabled={!formData.pickupSlot} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Next</button>
+            </div>
+          </>
+        )}
+
+        {/* Step 4: Summary & Payment */}
+        {step === 4 && (
+          <>
+            <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-white">Step 4: Summary & Payment</h2>
+            <div className="text-gray-700 dark:text-gray-300 space-y-2 text-sm">
+              <p><strong>Name:</strong> {formData.name}</p>
+              <p><strong>Phone:</strong> {formData.phone}</p>
+              <p><strong>Email:</strong> {formData.email}</p>
+              <p><strong>Address:</strong> {`${formData.addressLine1}, ${formData.addressLine2}, ${formData.city}, ${formData.state}, ${formData.pincode}, ${formData.country}`}</p>
+              <p><strong>Landmark:</strong> {formData.landmark}</p>
+              <p><strong>Pickup Slot:</strong> {formData.pickupSlot}</p>
+              <p><strong>Book:</strong> {book.title} — ₹{book.sellPrice}</p>
+            </div>
+
+            <div className="mt-6">
+              <p className="mb-2 text-gray-700 dark:text-white">Choose payment method:</p>
+              <div className="flex gap-6">
+                <label className="flex items-center gap-2 text-gray-800 dark:text-white">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="upi"
+                    checked={formData.paymentMethod === "upi"}
+                    onChange={handleChange}
+                  />
+                  UPI
+                </label>
+                <label className="flex items-center gap-2 text-gray-800 dark:text-white">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="bank"
+                    checked={formData.paymentMethod === "bank"}
+                    onChange={handleChange}
+                  />
+                  Bank Transfer
+                </label>
+              </div>
+
+              {formData.paymentMethod === "upi" && (
+                <div className="space-y-4 mt-4">
+                  <input name="upiName" value={formData.upiName} onChange={handleChange} placeholder="Name on UPI" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
+                  <input name="upiId" value={formData.upiId} onChange={handleChange} placeholder="UPI ID" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
+                  <input name="upiPhone" value={formData.upiPhone} onChange={handleChange} placeholder="Phone Number linked to UPI" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
+                </div>
+              )}
+
+              {formData.paymentMethod === "bank" && (
+                <div className="space-y-4 mt-4">
+                  <input name="bankAccountHolder" value={formData.bankAccountHolder} onChange={handleChange} placeholder="Account Holder Name" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
+                  <input name="bankAccountNumber" value={formData.bankAccountNumber} onChange={handleChange} placeholder="Account Number" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
+                  <input name="ifscCode" value={formData.ifscCode} onChange={handleChange} placeholder="IFSC Code" className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:text-white" />
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-between mt-6">
+              <button onClick={handleBack} className="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">Back</button>
+              <button onClick={handleSubmit} className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                Confirm & Place Order
               </button>
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>
