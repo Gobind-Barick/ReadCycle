@@ -11,6 +11,8 @@ import TermsAndCondition from "./pages/TermsAndCondition";
 import Sell from "./pages/Sell";
 import Categories from "./pages/Categories";
 import Faq from "./pages/Faq";
+import SellBook from "./pages/SellBook";
+
 import ReturnRefundPolicy from "./pages/ReturnRefundPolicy";
 import ContactUs from "./pages/ContactUs";
 import SearchResultsPage from "./pages/SearchResultsPage";
@@ -56,6 +58,8 @@ function App() {
         <Route path="/search" element={<SearchResultsPage />} />
         <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
         <Route path="/profile" element={<UserProfilePage />} />
+        <Route path="/sell/:id" element={<SellBook />} />
+
       </Routes>
     </Router>
   );
