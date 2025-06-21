@@ -4,7 +4,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setUser, setToken } from "../redux/userSlice";
 
-const LoginModal = ({ onClose, onSignupClick }) => {
+const LoginModal = ({ onClose, onSignupClick, onLoginSuccess }) => {
   const [mobile, setMobile] = useState("");
   const [otp, setOtp] = useState("");
   const [isOtpSent, setOtpSent] = useState(false);
@@ -48,6 +48,10 @@ const LoginModal = ({ onClose, onSignupClick }) => {
       const { token, user } = res.data;
       dispatch(setUser(user));
       dispatch(setToken(token));
+
+      if (onLoginSuccess) {
+        onLoginSuccess(); // ✅ Auto-close modal on login success
+      }
     } catch (err) {
       alert("Invalid OTP or verification failed");
       console.error(err);
@@ -131,13 +135,6 @@ const LoginModal = ({ onClose, onSignupClick }) => {
           <FcGoogle className="text-xl" />
           <span className="text-gray-800 dark:text-gray-200">Continue with Google</span>
         </button>
-
-        {/* <p className="text-center text-sm mt-4 text-gray-600 dark:text-gray-400">
-          Don’t have an account?{" "}
-          <button className="text-blue-600 dark:text-blue-400 underline" onClick={onSignupClick}>
-            Create an account
-          </button>
-        </p> */}
       </div>
     </div>
   );

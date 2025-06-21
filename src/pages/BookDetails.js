@@ -5,6 +5,7 @@ import axios from "axios";
 import Navbar from "../components/Navbar";
 import BookCarousel from "../components/BookCarousel";
 import { addCartItemToBackend } from "../redux/cartSlice";
+import LoginModal from "../components/LoginModal";
 
 const BookDetails = () => {
   const { id } = useParams();
@@ -19,6 +20,7 @@ const BookDetails = () => {
   const [newReview, setNewReview] = useState("");
   const [newRating, setNewRating] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     const fetchBookAndReviews = async () => {
@@ -40,7 +42,7 @@ const BookDetails = () => {
 
   const handleAddToCart = () => {
     if (!token) {
-      alert("Please log in to add items to your cart.");
+      setShowLoginModal(true);
       return;
     }
 
@@ -62,9 +64,10 @@ const BookDetails = () => {
 
   const handleSellBook = () => {
     if (!token) {
-      alert("Please log in to sell your book.");
+      setShowLoginModal(true);
       return;
     }
+
     if (book?.id) {
       navigate(`/sell/${book.id}`);
     } else {
@@ -74,7 +77,7 @@ const BookDetails = () => {
 
   const handleSubmitReview = async () => {
     if (!token || !user) {
-      alert("Please log in to submit a review.");
+      setShowLoginModal(true);
       return;
     }
 
@@ -107,6 +110,10 @@ const BookDetails = () => {
     }
   };
 
+  const handleLoginSuccess = () => {
+    setShowLoginModal(false);
+  };
+
   if (loading) return <div className="p-10 text-center dark:text-white">Loading book details...</div>;
   if (!book) return <div className="p-10 text-center text-red-600 dark:text-red-400">Book not found.</div>;
 
@@ -137,11 +144,11 @@ const BookDetails = () => {
             </button>
             {book?.id && (
               <button
-  className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded mt-4"
-  onClick={() => navigate(`/sell/${book.id}`)}
->
-  Sell this book for ₹{book.sellPrice}
-</button>
+                className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded mt-4"
+                onClick={handleSellBook}
+              >
+                Sell this book for ₹{book.sellPrice}
+              </button>
             )}
           </div>
         </div>
@@ -219,6 +226,13 @@ const BookDetails = () => {
           </button>
         </div>
       </section>
+
+      {showLoginModal && (
+        <LoginModal
+          onClose={() => setShowLoginModal(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      )}
     </div>
   );
 };

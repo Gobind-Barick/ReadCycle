@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const SellBook = () => {
   const { id } = useParams();
@@ -48,6 +49,8 @@ const SellBook = () => {
   const handleNext = () => setStep((prev) => prev + 1);
   const handleBack = () => setStep((prev) => prev - 1);
 
+  const navigate = useNavigate();
+
   const handleSubmit = async () => {
     try {
       const payload = {
@@ -64,7 +67,7 @@ const SellBook = () => {
 
       const { awb, message } = response.data;
       alert(`✅ ${message}\nAWB Number: ${awb}`);
-      setStep(1); // reset if needed
+      navigate("/"); // reset if needed
     } catch (err) {
       console.error("Error submitting sell order:", err.response?.data || err.message);
       alert("❌ Something went wrong while placing the order.");
