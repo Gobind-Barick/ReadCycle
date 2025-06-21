@@ -50,11 +50,24 @@ const SellBook = () => {
 
   const handleSubmit = async () => {
     try {
-      console.log("Final submission:", formData);
-      alert("Sell order placed successfully!");
+      const payload = {
+        bookId: book.id,
+        bookTitle: book.title,
+        expectedPrice: book.sellPrice,
+        ...formData,
+      };
+
+      const response = await axios.post(
+        "http://localhost:8080/api/books/sell-orders/create",
+        payload
+      );
+
+      const { awb, message } = response.data;
+      alert(`✅ ${message}\nAWB Number: ${awb}`);
+      setStep(1); // reset if needed
     } catch (err) {
-      console.error("Error submitting sell order:", err);
-      alert("Something went wrong!");
+      console.error("Error submitting sell order:", err.response?.data || err.message);
+      alert("❌ Something went wrong while placing the order.");
     }
   };
 
@@ -75,7 +88,6 @@ const SellBook = () => {
           You are selling: <strong>{book.title}</strong> for ₹{book.sellPrice}
         </p>
 
-        {/* Step 1: Contact Details */}
         {step === 1 && (
           <>
             <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-white">Step 1: Contact Details</h2>
@@ -90,7 +102,6 @@ const SellBook = () => {
           </>
         )}
 
-        {/* Step 2: Shipping Address */}
         {step === 2 && (
           <>
             <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-white">Step 2: Shipping Address</h2>
@@ -110,7 +121,6 @@ const SellBook = () => {
           </>
         )}
 
-        {/* Step 3: Pickup Slot */}
         {step === 3 && (
           <>
             <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-white">Step 3: Pickup Slot</h2>
@@ -137,7 +147,6 @@ const SellBook = () => {
           </>
         )}
 
-        {/* Step 4: Summary & Payment */}
         {step === 4 && (
           <>
             <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-white">Step 4: Summary & Payment</h2>
@@ -155,23 +164,11 @@ const SellBook = () => {
               <p className="mb-2 text-gray-700 dark:text-white">Choose payment method:</p>
               <div className="flex gap-6">
                 <label className="flex items-center gap-2 text-gray-800 dark:text-white">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="upi"
-                    checked={formData.paymentMethod === "upi"}
-                    onChange={handleChange}
-                  />
+                  <input type="radio" name="paymentMethod" value="upi" checked={formData.paymentMethod === "upi"} onChange={handleChange} />
                   UPI
                 </label>
                 <label className="flex items-center gap-2 text-gray-800 dark:text-white">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="bank"
-                    checked={formData.paymentMethod === "bank"}
-                    onChange={handleChange}
-                  />
+                  <input type="radio" name="paymentMethod" value="bank" checked={formData.paymentMethod === "bank"} onChange={handleChange} />
                   Bank Transfer
                 </label>
               </div>
