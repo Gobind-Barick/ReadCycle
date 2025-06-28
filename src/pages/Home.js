@@ -29,21 +29,7 @@ const promotionalBanners = [
     image: "images/mangaup.webp",
     button: "Shop Now",
   },
-  // {
-  //   id: 2,
-  //   title: "Declutter Your Shelf",
-  //   subtitle: "Sell your old books easily and earn money",
-  //   image: "https://via.placeholder.com/1200x400?text=Sell+Books",
-  //   button: "Start Selling",
-  // },
-  // {
-  //   id: 3,
-  //   title: "Discover New Reads",
-  //   subtitle: "Explore hand-picked recommendations just for you",
-  //   image: "images/new.webp",
-  //   button: "Browse Collection",
-  // },
-    { 
+  {
     id: 4,
     title: "Find Your Inner Strength",
     subtitle: "Explore top self‑help books handpicked for personal growth",
@@ -51,12 +37,12 @@ const promotionalBanners = [
     button: "Discover Now",
   },
   {
-  id: 5,
-  title: "Hindi Sahitya Collection",
-  subtitle: "Rediscover timeless Hindi literature and classics",
-  image: "/images/hindi1.avif", // Place your Hindi literature image here
-  button: "Browse Collection"
-}
+    id: 5,
+    title: "Hindi Sahitya Collection",
+    subtitle: "Rediscover timeless Hindi literature and classics",
+    image: "/images/hindi1.avif",
+    button: "Browse Collection",
+  },
 ];
 
 const Home = () => {
@@ -64,14 +50,31 @@ const Home = () => {
   const carouselRef = useRef();
 
   useEffect(() => {
-    axios
-      .get("https://readcycle-backend-gyud.onrender.com/api/books")
-      .then((response) => {
-        setBooks(response.data);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch books:", error);
-      });
+    const cachedBooks = JSON.parse(localStorage.getItem("booksCache"));
+    const now = new Date();
+
+    if (
+      cachedBooks &&
+      now.getTime() - cachedBooks.timestamp < 1000 * 60 * 5 // 5 minute cache expiry
+    ) {
+      setBooks(cachedBooks.data);
+    } else {
+      axios
+        .get("http://localhost:8080/api/books")
+        .then((response) => {
+          setBooks(response.data);
+          localStorage.setItem(
+            "booksCache",
+            JSON.stringify({
+              data: response.data,
+              timestamp: now.getTime(),
+            })
+          );
+        })
+        .catch((error) => {
+          console.error("Failed to fetch books:", error);
+        });
+    }
   }, []);
 
   const scrollCarousel = (direction) => {
@@ -96,8 +99,7 @@ const Home = () => {
   };
 
   return (
-  <div className="min-h-screen overflow-x-hidden bg-gray-50 dark:bg-[#0f1014] text-gray-900 dark:text-white transition-all duration-300">
-
+    <div className="min-h-screen overflow-x-hidden bg-gray-50 dark:bg-[#0f1014] text-gray-900 dark:text-white transition-all duration-300">
       {/* Hero/Promotional Carousel */}
       <section className="relative">
         <Slider {...carouselSettings}>
@@ -106,17 +108,15 @@ const Home = () => {
               <img
                 src={banner.image}
                 alt={banner.title}
-          className="w-full h-64 md:h-96 object-cover object-center"
+                className="w-full h-64 md:h-96 object-cover object-center"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/40 flex flex-col justify-center items-center text-white text-center px-4">
-<h2 className="text-2xl md:text-4xl font-bold mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-
+                <h2 className="text-2xl md:text-4xl font-bold mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                   {banner.title}
                 </h2>
                 <p className="text-md md:text-lg mb-4 font-bold drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)] text-white">
-
-  {banner.subtitle}
-</p>
+                  {banner.subtitle}
+                </p>
                 <button className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm md:text-base">
                   {banner.button}
                 </button>
@@ -176,11 +176,6 @@ const Home = () => {
         title="💸 Books Under ₹300"
         books={books.filter((b) => b.price <= 300)}
       />
-
-      {/* Sell Your Books Section */}
-      {/* <section className="py-16 px-6 md:px-20 mt-10 shadow-inner bg-white dark:bg-[#1f1f1f]"> */}
-        {/* <SellProcessSection /> */}
-      {/* </section> */}
 
       <Footer />
     </div>
