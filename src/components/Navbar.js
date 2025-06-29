@@ -86,7 +86,7 @@ const Navbar = () => {
             </button>
           </form>
 
-          <Link to="/" className="hover:underline">Buy</Link>
+          <Link to="/buy" className="hover:underline">Buy</Link>
           <Link to="/sell" className="hover:underline">Sell</Link>
           <Link to="/cart" className="relative">
             <FiShoppingCart size={20} />

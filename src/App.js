@@ -12,6 +12,7 @@ import Sell from "./pages/Sell";
 import Categories from "./pages/Categories";
 import Faq from "./pages/Faq";
 import SellBook from "./pages/SellBook";
+import Buy from "./pages/Buy"
 
 import ReturnRefundPolicy from "./pages/ReturnRefundPolicy";
 import ContactUs from "./pages/ContactUs";
@@ -43,7 +44,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/book/:id" element={<BookDetails />} />
-        <Route path="/buy" element={<BuyPage />} />
+        <Route path="/buy" element={<Buy/>} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/product-category/:category" element={<CategoryPage />} />
@@ -59,6 +60,7 @@ function App() {
         <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
         <Route path="/profile" element={<UserProfilePage />} />
         <Route path="/sell/:id" element={<SellBook />} />
+
 
       </Routes>
     </Router>

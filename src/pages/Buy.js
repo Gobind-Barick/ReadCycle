@@ -1,12 +1,14 @@
-import Footer from "../components/Footer";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 
-const Sell = () => {
+const Buy = () => {
   const [books, setBooks] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBook, setSelectedBook] = useState(null); // for modal
+  const navigate = useNavigate();
 
   useEffect(() => {
     const cachedBooks = JSON.parse(localStorage.getItem("booksCache"));
@@ -41,16 +43,15 @@ const Sell = () => {
   const visibleBooks = filteredBooks.slice(0, visibleCount);
   const hasMore = visibleCount < filteredBooks.length;
 
-  const handleSellNow = (book) => {
-    setSelectedBook(book);
+  const handleAddToCart = (book) => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.push(book);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert(`${book.title} added to your cart.`);
   };
 
-  const confirmSell = () => {
-    const sellCart = JSON.parse(localStorage.getItem("sellCart")) || [];
-    sellCart.push(selectedBook);
-    localStorage.setItem("sellCart", JSON.stringify(sellCart));
-    setSelectedBook(null);
-    alert(`${selectedBook.title} added to your sell cart.`);
+  const handleCardClick = (bookId) => {
+    navigate(`/book/${bookId}`);
   };
 
   return (
@@ -59,7 +60,7 @@ const Sell = () => {
         {/* Page Heading */}
         <div>
           <h1 className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-2">
-            Sell Your Books
+            Buy Books
           </h1>
           <div className="w-20 h-1 bg-green-500 rounded"></div>
         </div>
@@ -80,7 +81,8 @@ const Sell = () => {
           {visibleBooks.map((book) => (
             <div
               key={book.id}
-              className="flex items-center bg-white dark:bg-gray-800 rounded-lg p-4 shadow hover:shadow-lg transition"
+              onClick={() => handleCardClick(book.id)}
+              className="cursor-pointer transform transition-transform duration-300 hover:scale-105 flex items-center bg-white dark:bg-gray-800 rounded-lg p-4 shadow hover:shadow-lg"
             >
               <img
                 src={book.imageUrl}
@@ -92,13 +94,16 @@ const Sell = () => {
                   {book.title}
                 </h3>
                 <p className="text-green-600 font-bold mt-1">
-                  Sell Price: ₹{book.sellPrice}
+                  Price: ₹{book.price}
                 </p>
                 <button
-                  onClick={() => handleSellNow(book)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent triggering card click
+                    handleAddToCart(book);
+                  }}
                   className="mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-full"
                 >
-                  SELL NOW
+                  Add to Cart
                 </button>
               </div>
             </div>
@@ -117,35 +122,16 @@ const Sell = () => {
           </div>
         )}
 
-        {/* Modal */}
-{selectedBook && (
-  <div className="fixed inset-0 flex items-center justify-center z-50">
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-sm w-full text-center shadow-lg border border-gray-300">
-      <h2 className="text-xl font-semibold mb-4">
-        Sell "{selectedBook.title}" for ₹{selectedBook.sellPrice}?
-      </h2>
-      <div className="flex justify-center gap-4">
-        <button
-          onClick={confirmSell}
-          className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-full"
-        >
-          Confirm
-        </button>
-        <button
-          onClick={() => setSelectedBook(null)}
-          className="bg-gray-400 hover:bg-gray-500 text-white font-semibold px-4 py-2 rounded-full"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+        {/* No Results */}
+        {visibleBooks.length === 0 && (
+          <p className="text-center text-gray-600 dark:text-gray-300">
+            No books found matching your search.
+          </p>
+        )}
       </div>
       <Footer />
     </>
   );
 };
 
-export default Sell;
+export default Buy;
