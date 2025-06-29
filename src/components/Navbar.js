@@ -22,11 +22,25 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.clear();
-    dispatch(logout());
-    window.location.reload();
-    window.location.href = "https://readcycle-backend-gyud.onrender.com/api/logout";
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/logout", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        localStorage.clear();
+        dispatch(logout());
+        setShowLogin(false); // close login modal if open
+        setShowSignup(false);
+        navigate("/"); // redirect to homepage
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   const handleSearch = (e) => {
