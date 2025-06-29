@@ -1,238 +1,136 @@
 import Navbar from "../components/Navbar";
-import { TextField, InputAdornment, Button } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import Footer from "../components/Footer";
-import { useState } from "react";
-
-const products = [
-  {
-    id: 1,
-    title: "The Last of Us Part I - PS5",
-    image: "https://m.media-amazon.com/images/I/71NBQ2a52CL._SL1500_.jpg",
-  },
-  {
-    id: 2,
-    title: "Sony PlayStation 4 Pro 1 TB Black - PS4",
-    image: "https://m.media-amazon.com/images/I/71NBQ2a52CL._SL1500_.jpg",
-  },
-  {
-    id: 3,
-    title: "God of War Ragnarok - PS5",
-    image: "https://m.media-amazon.com/images/I/81iVsw3DHwL._SL1500_.jpg",
-  },
-  {
-    id: 4,
-    title: "DualSense Wireless Controller - Midnight Black",
-    image: "https://m.media-amazon.com/images/I/61k05QXW5xL._SL1500_.jpg",
-  },
-  {
-    id: 5,
-    title: "PlayStation 5 Console (Disc Version)",
-    image: "https://m.media-amazon.com/images/I/81dQwQlmAXL._SL1500_.jpg",
-  },
-  {
-    id: 6,
-    title: "PlayStation 5 HD Camera",
-    image: "https://m.media-amazon.com/images/I/61d1I-hM1AL._SL1500_.jpg",
-  },
-  {
-    id: 7,
-    title: "Spider-Man: Miles Morales - PS5",
-    image: "https://m.media-amazon.com/images/I/81Y7J-bkM-L._SL1500_.jpg",
-  },
-  {
-    id: 8,
-    title: "PlayStation VR2 Headset",
-    image: "https://m.media-amazon.com/images/I/81B+nfR93EL._SL1500_.jpg",
-  },
-  {
-    id: 9,
-    title: "Horizon Forbidden West - PS5",
-    image: "https://m.media-amazon.com/images/I/81NeZL8MtrL._SL1500_.jpg",
-  },
-  {
-    id: 10,
-    title: "Returnal - PS5",
-    image: "https://m.media-amazon.com/images/I/81K4kGcmgNL._SL1500_.jpg",
-  },
-  {
-    id: 11,
-    title: "Gran Turismo 7 - PS5",
-    image: "https://m.media-amazon.com/images/I/71bUJ4vKH9L._SL1500_.jpg",
-  },
-  {
-    id: 12,
-    title: "Ratchet & Clank: Rift Apart - PS5",
-    image: "https://m.media-amazon.com/images/I/81xRMaTFFML._SL1500_.jpg",
-  },
-];
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const Sell = () => {
+  const [books, setBooks] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const cachedBooks = JSON.parse(localStorage.getItem("booksCache"));
+    const now = new Date();
+
+    if (cachedBooks && now.getTime() - cachedBooks.timestamp < 1000 * 60 * 5) {
+      setBooks(cachedBooks.data);
+    } else {
+      axios
+        .get("http://localhost:8080/api/books")
+        .then((response) => {
+          setBooks(response.data);
+          localStorage.setItem(
+            "booksCache",
+            JSON.stringify({ data: response.data, timestamp: now.getTime() })
+          );
+        })
+        .catch((error) => {
+          console.error("Failed to fetch books:", error);
+        });
+    }
+  }, []);
 
   const handleLoadMore = () => {
     setVisibleCount((prev) => prev + 10);
   };
 
-  const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(searchQuery.trim().toLowerCase())
+  const filteredBooks = books.filter((book) =>
+    book.title.toLowerCase().includes(searchQuery.trim().toLowerCase())
   );
 
-  const visibleProducts = filteredProducts.slice(0, visibleCount);
-  const hasMore = visibleCount < filteredProducts.length;
+  const visibleBooks = filteredBooks.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredBooks.length;
 
   return (
     <>
-      
-      <div className="bg-grey text-white min-h-screen p-6 space-y-6  max-w-6xl mx-auto">
-        {/* Header */}
-        <h1 className="text-4xl font-bold text-black">
-          Sell <span class="block w-14 h-1 bg-green-500 mt-1 rounded-sm"></span>
-        </h1>
+      <div className="bg-white dark:bg-gray-900 min-h-screen px-4 md:px-8 py-10 max-w-7xl mx-auto space-y-10">
+        {/* Page Heading */}
+        <div>
+          <h1 className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-2">
+            Sell Your Books
+          </h1>
+          <div className="w-20 h-1 bg-green-500 rounded"></div>
+        </div>
 
-        {/* Banner */}
-        <div className="bg-gradient-to-br from-[#0f0f0f] to-[#1a1a1a] border-2 border-green-500 rounded-xl p-8 text-center shadow-lg">
-          <p className="text-2xl md:text-3xl font-extrabold text-green-400 mb-1 tracking-wide">
-            WANT TO SELL?
-          </p>
-          <p className="text-lg md:text-xl text-gray-100">FOLLOW THESE</p>
-          <h2 className="text-2xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-600 mb-8">
-            3 SIMPLE STEPS TO SELL YOUR PRODUCT
-          </h2>
-
-          <div className="flex flex-col md:flex-row justify-between items-stretch gap-6 px-4 md:px-16">
-            {/* Step Box */}
-            {[
-              {
-                num: "1",
-                title: "Search",
-                desc: "Search and add the products you want to sell",
-              },
-              {
-                num: "2",
-                title: "Shipping",
-                desc: "Choose free pickup or self ship",
-              },
-              {
-                num: "3",
-                title: "Get Paid",
-                desc: "via UPI, Paytm, IMPS, Bank",
-              },
-            ].map((step, idx) => (
-              <div
-                key={idx}
-                className="flex-1 flex flex-col items-center bg-[#131313] p-6 rounded-lg hover:bg-[#1f1f1f] transition-all duration-300 shadow-md h-full"
-              >
-                <div className="text-5xl font-extrabold text-green-500 mb-2">
-                  {step.num}
-                </div>
-                <p className="text-lg font-semibold text-green-300">
-                  {step.title}
-                </p>
-                <p className="text-sm text-gray-400 mt-1 text-center">
-                  {step.desc}
-                </p>
+        {/* Steps Section */}
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-8 grid md:grid-cols-3 gap-6 shadow-md">
+          {[
+            { num: "1", title: "Search", desc: "Find your book to sell." },
+            { num: "2", title: "Ship", desc: "Choose free pickup or self-ship." },
+            { num: "3", title: "Get Paid", desc: "Receive payment via UPI, Paytm, or Bank." },
+          ].map((step) => (
+            <div
+              key={step.num}
+              className="flex flex-col items-center text-center p-4 border border-green-500 rounded-lg hover:bg-green-50 dark:hover:bg-gray-700 transition"
+            >
+              <div className="text-5xl font-bold text-green-600 mb-2">
+                {step.num}
               </div>
-            ))}
-          </div>
+              <h3 className="text-xl font-semibold mb-1">{step.title}</h3>
+              <p className="text-gray-600 dark:text-gray-300">{step.desc}</p>
+            </div>
+          ))}
         </div>
 
         {/* Search Bar */}
         <div>
-          <TextField
-            size="small"
-            id="outlined-basic"
-            variant="outlined"
-            placeholder="Search Books..."
-            fullWidth
+          <input
+            type="text"
+            placeholder="Search books..."
+            value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-              style: {
-                fontSize: "20px",
-              },
-            }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "15px",
-                fontSize: "20px",
-                "& fieldset": {
-                  borderColor: "black", // Always black border
-                },
-                "&:hover fieldset": {
-                  borderColor: "black", // Black border on hover
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "black", // Black border on focus
-                },
-              },
-            }}
+            className="w-full px-4 py-3 rounded-full border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 text-lg bg-white dark:bg-gray-800 text-black dark:text-white"
           />
         </div>
 
-        {/* Products */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {visibleProducts.map((product) => (
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {visibleBooks.map((book) => (
             <div
-              key={product.id}
-              className="bg-gray-900 rounded-lg p-4 flex items-center gap-4 shadow-md"
+              key={book.id}
+              className="flex items-center bg-white dark:bg-gray-800 rounded-lg p-4 shadow hover:shadow-lg transition"
             >
               <img
-                src={product.image}
-                alt={product.title}
-                className="w-24 h-24 object-cover rounded"
+                src={book.imageUrl}
+                alt={book.title}
+                className="w-24 h-24 object-cover rounded mr-4"
               />
               <div className="flex-1">
-                <h3 className="text-lg font-semibold">{product.title}</h3>
-                <button className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <h3 className="text-lg font-semibold text-black dark:text-white">
+                  {book.title}
+                </h3>
+                <button className="mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-full">
                   SELL NOW
                 </button>
               </div>
             </div>
           ))}
         </div>
-        {hasMore ? (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+
+        {/* Load More */}
+        {hasMore && (
+          <div className="flex justify-center">
             <button
-              className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               onClick={handleLoadMore}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-full"
             >
               Load More
             </button>
           </div>
-        ) : null}
+        )}
 
-        <div className="bg-[#0f0f0f] border-2 border-green-500 rounded-xl p-4 text-center flex flex-col md:flex-row justify-center items-center gap-3 md:gap-6 text-white text-sm md:text-base">
-          <p className="font-medium">
-            If you wish to sell any gaming product not listed above, please
-            contact us via
+        {/* Contact Box */}
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 text-center shadow-md">
+          <p className="mb-3 text-black dark:text-white">
+            Can't find your book? Contact us:
           </p>
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1 text-white-400 font-semibold">
-              <img
-                src="https://img.icons8.com/ios-filled/20/22c55e/whatsapp.png"
-                alt="WhatsApp"
-                className="w-5 h-5"
-              />
-              98406 32979
-            </span>
-            <span className="flex items-center gap-1 text-white-400 font-semibold">
-              <img
-                src="https://img.icons8.com/ios-filled/20/22c55e/new-post.png"
-                alt="Email"
-                className="w-5 h-5"
-              />
+          <div className="flex flex-col md:flex-row justify-center items-center gap-4 text-green-600 font-semibold">
+            <a href="https://wa.me/918447466860" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+              <img src="https://img.icons8.com/ios-filled/20/22c55e/whatsapp.png" alt="WhatsApp" />
+              WhatsApp: 98406 32979
+            </a>
+            <span className="flex items-center gap-2">
+              <img src="https://img.icons8.com/ios-filled/20/22c55e/new-post.png" alt="Email" />
               support@booknook.in
             </span>
           </div>

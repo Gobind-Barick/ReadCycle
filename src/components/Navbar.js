@@ -108,7 +108,8 @@ const Navbar = () => {
                 alt="user"
               />
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border rounded shadow">
+                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border rounded shadow z-50">
+                  {/* Added z-50 to ensure it stays above banners */}
                   <Link
                     to="/profile"
                     className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
