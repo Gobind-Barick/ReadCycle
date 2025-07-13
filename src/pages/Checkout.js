@@ -34,7 +34,7 @@ const Checkout = () => {
 
   const clearCartFromBackend = async () => {
     try {
-      await fetch(`http://localhost:8080/api/cart/clear`, {
+      await fetch(`https://readcycle-backend-gyud.onrender.com/api/cart/clear`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -74,7 +74,7 @@ const Checkout = () => {
     }
 
     try {
-      const orderCreationRes = await fetch("http://localhost:8080/api/orders/create-razorpay-order", {
+      const orderCreationRes = await fetch("https://readcycle-backend-gyud.onrender.com/api/orders/create-razorpay-order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +110,7 @@ const Checkout = () => {
   try {
     // 🔽 Call your backend endpoint to download the label
     const labelRes = await fetch(
-      `http://localhost:8080/api/orders/download-label/${awb}`,
+      `https://readcycle-backend-gyud.onrender.com/api/orders/download-label/${awb}`,
       {
         method: "GET",
         headers: {
