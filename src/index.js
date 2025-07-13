@@ -4,6 +4,8 @@ import './index.css';
 import App from './App';
 import { Provider } from 'react-redux';
 import { store } from './redux/store'; // ✅ Use the correct path to your store
+import { ColorModeProvider } from "./components/ui/ThemeContext";
+
 
 // Set theme based on preference/localStorage
 const storedTheme = localStorage.getItem("theme");
@@ -16,7 +18,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
+       <ColorModeProvider>
       <App />
+    </ColorModeProvider>
     </Provider>
   </React.StrictMode>
 );

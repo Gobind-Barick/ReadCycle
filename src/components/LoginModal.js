@@ -20,7 +20,7 @@ const LoginModal = ({ onClose, onSignupClick, onLoginSuccess }) => {
 
     try {
       setIsLoading(true);
-      await axios.post(`http://localhost:8080/api/auth/send-otp?mobile=${mobile}`);
+      await axios.post(`https://readcycle-backend-gyud.onrender.com/api/auth/send-otp?mobile=${mobile}`);
       setOtpSent(true);
     } catch (err) {
       alert("Failed to send OTP. Please try again.");
@@ -40,7 +40,7 @@ const LoginModal = ({ onClose, onSignupClick, onLoginSuccess }) => {
       setIsLoading(true);
       const fullPhone = "91" + mobile;
 
-      const res = await axios.post("http://localhost:8080/api/auth/verify-otp", {
+      const res = await axios.post("https://readcycle-backend-gyud.onrender.com/api/auth/verify-otp", {
         phone: fullPhone,
         otp: otp,
       });
@@ -61,7 +61,7 @@ const LoginModal = ({ onClose, onSignupClick, onLoginSuccess }) => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href = "https://readcycle-backend-gyud.onrender.com/oauth2/authorization/google";
   };
 
   return (

@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 // Replace with your backend URL
-const BASE_URL = 'http://localhost:8080/api/cart';
+const BASE_URL = 'https://readcycle-backend-gyud.onrender.com/api/cart';
 
 // Get cart items for user
 export const fetchCartItems = createAsyncThunk(

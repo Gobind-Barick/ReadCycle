@@ -24,7 +24,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/logout", {
+      const response = await fetch("https://readcycle-backend-gyud.onrender.com/api/logout", {
         method: "GET",
         credentials: "include",
       });

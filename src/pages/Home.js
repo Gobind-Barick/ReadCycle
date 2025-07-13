@@ -22,19 +22,19 @@ const CATEGORIES = [
 ];
 
 const promotionalBanners = [
-  {
+ {
     id: 1,
     title: "Explore Iconic Manga",
     subtitle: "Top-selling Manga series for every anime lover",
-    image: "images/mangaup.webp",
+    image: "images/mangaup-1920.png",
     button: "Shop Now",
   },
   {
     id: 4,
-    title: "Find Your Inner Strength",
-    subtitle: "Explore top self‑help books handpicked for personal growth",
-    image: "/images/self-help2.jpg",
-    button: "Discover Now",
+    // title: "Find Your Inner Strength",
+    // subtitle: "Explore top self‑help books handpicked for personal growth",
+    image: "/images/selfhelp-1920.png",
+    // button: "Discover Now",
   },
   {
     id: 5,
@@ -60,7 +60,7 @@ const Home = () => {
       setBooks(cachedBooks.data);
     } else {
       axios
-        .get("http://localhost:8080/api/books")
+        .get("https://readcycle-backend-gyud.onrender.com/api/books")
         .then((response) => {
           setBooks(response.data);
           localStorage.setItem(
