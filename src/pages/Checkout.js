@@ -74,7 +74,7 @@ const Checkout = () => {
     }
 
     try {
-      const orderCreationRes = await fetch("https://readcycle-backend-gyud.onrender.com/api/orders/create-razorpay-order", {
+      const orderCreationRes = await fetch("http://localhost:8080/api/orders/create-razorpay-order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
