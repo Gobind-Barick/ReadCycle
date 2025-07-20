@@ -174,7 +174,7 @@ const SellBook = () => {
                   <input type="radio" name="paymentMethod" value="bank" checked={formData.paymentMethod === "bank"} onChange={handleChange} />
                   Bank Transfer
                 </label>
-              </div>
+              </div>s
 
               {formData.paymentMethod === "upi" && (
                 <div className="space-y-4 mt-4">

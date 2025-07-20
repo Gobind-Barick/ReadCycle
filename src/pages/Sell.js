@@ -1,12 +1,19 @@
 import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { addSellCartItemToBackend } from "../redux/sellCartSlice";
+import { useNavigate } from "react-router-dom";
 
 const Sell = () => {
   const [books, setBooks] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedBook, setSelectedBook] = useState(null); // for modal
+  const [selectedBook, setSelectedBook] = useState(null);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
     const cachedBooks = JSON.parse(localStorage.getItem("booksCache"));
@@ -46,12 +53,23 @@ const Sell = () => {
   };
 
   const confirmSell = () => {
-    const sellCart = JSON.parse(localStorage.getItem("sellCart")) || [];
-    sellCart.push(selectedBook);
-    localStorage.setItem("sellCart", JSON.stringify(sellCart));
-    setSelectedBook(null);
-    alert(`${selectedBook.title} added to your sell cart.`);
-  };
+  if (!user.token) {
+    alert("Please login to add items to your sell cart.");
+    navigate("/login");
+    return;
+  }
+
+  dispatch(addSellCartItemToBackend({ bookId: selectedBook.id, token: user.token }))
+    .unwrap()
+    .then(() => {
+      alert(`${selectedBook.title} added to your sell cart.`);
+      setSelectedBook(null);
+    })
+    .catch((error) => {
+      console.error("Failed to add to sell cart:", error);
+      alert("Failed to add to sell cart.");
+    });
+};
 
   return (
     <>
@@ -118,30 +136,29 @@ const Sell = () => {
         )}
 
         {/* Modal */}
-{selectedBook && (
-  <div className="fixed inset-0 flex items-center justify-center z-50">
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-sm w-full text-center shadow-lg border border-gray-300">
-      <h2 className="text-xl font-semibold mb-4">
-        Sell "{selectedBook.title}" for ₹{selectedBook.sellPrice}?
-      </h2>
-      <div className="flex justify-center gap-4">
-        <button
-          onClick={confirmSell}
-          className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-full"
-        >
-          Confirm
-        </button>
-        <button
-          onClick={() => setSelectedBook(null)}
-          className="bg-gray-400 hover:bg-gray-500 text-white font-semibold px-4 py-2 rounded-full"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+        {selectedBook && (
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-sm w-full text-center shadow-lg border border-gray-300">
+              <h2 className="text-xl font-semibold mb-4">
+                Sell "{selectedBook.title}" for ₹{selectedBook.sellPrice}?
+              </h2>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={confirmSell}
+                  className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-full"
+                >
+                  Confirm
+                </button>
+                <button
+                  onClick={() => setSelectedBook(null)}
+                  className="bg-gray-400 hover:bg-gray-500 text-white font-semibold px-4 py-2 rounded-full"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       <Footer />
     </>
